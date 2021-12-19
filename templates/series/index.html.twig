@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Series index{% endblock %}
+
+{% block body %}
+    <h1>Explore series</h1>
+
+    <div class="menus">
+         <form action="" method="get">
+            <input type="search" name="search_title" placeholder="Search by title" class="form__input">
+            <input type="submit" value="Search" class="button">
+        </form>
+    
+        <select name="country">
+            <option selected="selected"> </option>
+            {% for country in countries %}
+                <option value="{{path('series_index', {'country':country.id})}}"> {{path('series_index', {'country':country.name})}} </option>
+            {% endfor %}
+        </select>
+
+        <select name="category">
+            <option selected="selected"> </option>
+            {% for category in categories %}
+                <option value="{{path('series_index', {'category':category.id})}}"> {{path('series_index', {'category':category.name})}} </option>
+            {% endfor %}
+        </select>
+
+        <select>
+        </select>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Plot</th>
+                <th>Imdb</th>
+                <th>Poster</th>
+                <th>Director</th>
+                <th>YoutubeTrailer</th>
+                <th>Awards</th>
+                <th>YearStart</th>
+                <th>YearEnd</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for series in series %}
+            <tr>
+                <td>{{ series.id }}</td>
+                <td>{{ series.title }}</td>
+                <td>{{ series.plot }}</td>
+                <td>{{ series.imdb }}</td>
+                <td><a href="{{path('series_poster', {'id':series.id})}}"> 
+                <img src="{{ path('series_poster', {'id':series.id})}}"/>
+                </a>
+                </td>
+                <td>{{ series.director }}</td>
+                <td>{{ series.youtubeTrailer }}</td>
+                <td>{{ series.awards }}</td>
+                <td>{{ series.yearStart }}</td>
+                <td>{{ series.yearEnd }}</td>
+                <td>
+                    <a href="{{ path('series_show', {'id': series.id}) }}">show</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!--<a href="{{ path('series_new') }}">Create new</a> -!>
+{% endblock %}
