@@ -6,27 +6,8 @@
     <h1>Explore series</h1>
 
     <div class="menus">
-         <form action="" method="get">
-            <input type="search" name="search_title" placeholder="Search by title" class="form__input">
-            <input type="submit" value="Search" class="button">
-        </form>
-    
-        <select name="country">
-            <option selected="selected"> </option>
-            {% for country in countries %}
-                <option value="{{path('series_index', {'country':country.id})}}"> {{path('series_index', {'country':country.name})}} </option>
-            {% endfor %}
-        </select>
-
-        <select name="category">
-            <option selected="selected"> </option>
-            {% for category in categories %}
-                <option value="{{path('series_index', {'category':category.id})}}"> {{path('series_index', {'category':category.name})}} </option>
-            {% endfor %}
-        </select>
-
-        <select>
-        </select>
+            {% include 'series/_filter.html.twig' with {form : form} only %}
+            {{ knp_pagination_render(series) }}
     </div>
 
     <table class="table">
