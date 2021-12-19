@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -13,7 +14,29 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
+
     <body>
-        {% block body %}{% endblock %}
+        <style>
+        body {
+            background-color:#363636;
+            margin:auto;
+            width:72%;
+            color:white;
+        }
+        a{
+            color:white;
+            text-decoration:none;
+        }
+        </style>
+        <ul class="menu">
+            <li><a href="http://127.0.0.1:8000/home">Home</a></li>
+            <li><a href="">My series</a></li>
+            <li><a href="http://127.0.0.1:8000/series">Explore</a></li>
+            <li><a href="">About</a></li>
+            <li><a href="">Account</a></li>
+         </ul>
+
+        {% block body %}
+        {% endblock %}
     </body>
 </html>
