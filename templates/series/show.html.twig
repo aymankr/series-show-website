@@ -1,10 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Series{% endblock %}
-
 {% block body %}
-    <h1>Series</h1>
+    <div class="container">
+      <div class="show">
+            <div class="col-md-4">
+                <h2 class="show-title"> {{ series.title }} </h2>
+                <em> {{ series.yearStart }} - {{ series.yearEnd }} </em>
+                <img src="{{ path('series_poster', {'id':series.id})}}" class="show-img-left"/>
+            </div>
 
+            <div class="col-md-5">
+                <div class="d-flex justify-content-start mb">
+                </div>
+                    {% for serie in series %}
+                    {% endfor %}
+                <div style="margin-top:5em;">
+                </div>
+            </div>
+        </div>
+        <a href="{{ path('series_index') }}">back to list</a>
+    </div>
+    <!--
     <table class="container">
         <tbody>
             <tr>
@@ -58,6 +74,8 @@
             </tr>
         </tbody>
     </table>
-
     <a href="{{ path('series_index') }}">back to list</a>
+    -->
+
+    
 {% endblock %}

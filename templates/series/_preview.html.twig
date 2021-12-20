@@ -2,13 +2,19 @@
 
     <h5 class="preview-title"> {{ serie.title }} </h5>
     
-    <a href="{{path('series_poster', {'id':serie.id})}}"> 
+    <a href="{{path('series_show', {'id':serie.id})}}"> 
                 <img src="{{ path('series_poster', {'id':serie.id})}}" class="preview-img-top" style="  max-width:100%;
                                                                                                         max-height:80%;"/>
                 </a>
     <div class="preview-body">
         <div class="preview-title"> {{ serie.yearStart }}
         </div>
+        <!--
+        <div>
+            {% if serie.user != NULL %}
+                <div class="text text-warning">Followed</div>
+            {% endif %}
+        </div>-->
         <!-- imdb, youtube trailer, awards, year strart, end, action show-->
         <p class="text text-muted"> {{ serie.plot }}</p>
 
