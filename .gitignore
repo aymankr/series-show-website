@@ -17,3 +17,6 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+### Make sure the .env is not added to be commited
+.env
