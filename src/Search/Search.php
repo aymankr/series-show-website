@@ -32,5 +32,4 @@ class Search {
      * @var boolean
      */
     public $followed = false;
-
 }

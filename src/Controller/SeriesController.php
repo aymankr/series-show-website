@@ -25,8 +25,10 @@ class SeriesController extends AbstractController
     {
         $search = new Search();
         $search->page = $request->get('page', 1);
+
         $form = $this->createForm(SearchType::class, $search);
         $form->handleRequest($request);
+
         $series = $repository->getSeries($search);
 
         return $this->render('series/index.html.twig', [

@@ -34,8 +34,8 @@ class SeriesRepository extends ServiceEntityRepository
                 ->join('s.genre', 'g');
 
         if (!empty($search->s)) {
-            $query = $query->andWhere('s.title LIKE :s')
-            ->setParameter('s', "%{$search->s}%");
+            $query = $query->andWhere('s.title LIKE :search')
+            ->setParameter('search', "%{$search->s}%");
         }
 
         if (!empty($search->countries)) {
@@ -57,9 +57,9 @@ class SeriesRepository extends ServiceEntityRepository
         }        
         */
 
-        $query = $query->orderBy('s.title', 'ASC')->getQuery();
+        $query = $query->getQuery();
 
-        return $this->paginator->paginate($query, $search->page, 5);
+        return $this->paginator->paginate($query, $search->page, 6);
     }
 
     // /**
