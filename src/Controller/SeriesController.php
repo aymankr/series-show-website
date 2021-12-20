@@ -3,14 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Series;
-use App\Entity\Genre;
-use App\Entity\Country;
 use App\Form\SeriesType;
+use App\Form\SearchType;
+use App\Repository\SeriesRepository;
+use App\Search\Search;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -21,32 +21,17 @@ class SeriesController extends AbstractController
     /**
      * @Route("/", name="series_index", methods={"GET"})
      */
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(SeriesRepository $repository, Request $request): Response
     {
-        if (!isset($_GET['category'])) {
-            $series = $entityManager
-                ->getRepository(Series::class)
-                ->findBy(array(), array(), 4);
-        } else {
-            $em = $this->getDoctrine()->getManager();
-            $series = $em->getRepository(Series::class)->createQueryBuilder('s')
-                ->join('s.genre', 'g')
-                ->andWhere('g.name = :category')
-                ->setParameter('category', $_GET['category'])->setMaxResults(4)
-                ->getQuery()->getResult();
-        }
-
-        $countries = $entityManager
-            ->getRepository(Country::class)
-            ->findAll();
-        $categories = $entityManager
-            ->getRepository(Genre::class)
-            ->findAll();
+        $search = new Search();
+        $search->page = $request->get('page', 1);
+        $form = $this->createForm(SearchType::class, $search);
+        $form->handleRequest($request);
+        $series = $repository->getSeries($search);
 
         return $this->render('series/index.html.twig', [
             'series' => $series,
-            'countries' => $countries,
-            'categories' => $categories
+            'form' => $form->createView()
         ]);
     }
 
