@@ -5,10 +5,39 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
 
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
+        <style>
+            body {
+                background-color:#363636;
+                color:white;
+            }
+            ul {
+                list-style:none;
+            }
+            a{
+                color:white;
+            }
+
+            .grid {
+                display:grid;
+                grid-template-columns: repeat(3,1fr);
+                grid-gap:20px;
+            }
+
+            .page-item a{
+                color:red;
+            }
+            .page-item.active .page-link {
+                background-color: #F32013;
+                border-color: #F32013;
+            }
+        </style>
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
@@ -16,27 +45,16 @@
     </head>
 
     <body>
-        <style>
-        body {
-            background-color:#363636;
-            margin:auto;
-            width:72%;
-            color:white;
-        }
-        a{
-            color:white;
-            text-decoration:none;
-        }
-        </style>
-        <ul class="menu">
-            <li><a href="http://127.0.0.1:8000/home">Home</a></li>
-            <li><a href="">My series</a></li>
-            <li><a href="http://127.0.0.1:8000/series">Explore</a></li>
-            <li><a href="">About</a></li>
-            <li><a href="">Account</a></li>
+        <ul class="navbar navbar-dark bg-danger">
+            <li><a href="http://127.0.0.1:8000/home" class="navbar-brand mb-0 h1">Home</a></li>
+            <li><a href="" class="navbar-brand mb-0 h1">My series</a></li>
+            <li><a href="http://127.0.0.1:8000/series" class="navbar-brand mb-0 h1">Explore</a></li>
+            <li><a href="" class="navbar-brand mb-0 h1">About</a></li>
+            <li><a href="" class="navbar-brand mb-0 h1">Account</a></li>
          </ul>
 
-        {% block body %}
+        <div style="margin-top:5em;">
+        {% block body %}</div>
         {% endblock %}
     </body>
 </html>

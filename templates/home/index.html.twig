@@ -3,40 +3,39 @@
 {% block title %}{% endblock %}
 
 {% block body %}
-
-    <h1>Series by categories</h1>
-
         <style>
 
-        .categories {
+        .container {
             text-align:center;
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            margin-top: 4vh; 
         }
 
-        .categories a {
+        .container a {
             width: 13em;
-            height: 4em;
             margin :0.5em;
             background-color:#AF1F00;
             box-shadow: 0 14px 28px rgba(255,255,255,0.25), 0 10px 10px rgba(255,255,255,0.22);
             border-radius: 6%;
         }
 
-        .categories a:hover {
+        .container a:hover {
             letter-spacing: 2.7px;
             transform: translate(0, -5%);
             transition: 0.3s;
+            color:white;
+            text-decoration:none;
         }
 
         </style>
 
-        <div class="categories">
+        <div class="container">
+        
+        <h1>Series by categories</h1>
+
+        <div class="grid">
             {% for category in categories %}
                 <a href="{{path('series_index', {'category':category.name})}}"> <h3>{{ category.name }} </h3></a>
             {% endfor %}
+         </div>
          </div>
 
     <!--<a href="{{ path('series_new') }}">Create new</a> -!>

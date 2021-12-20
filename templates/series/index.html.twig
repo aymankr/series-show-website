@@ -1,24 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Series index{% endblock %}
+{% block title %}{% endblock %}
 
 {% block body %}
+    <div class="container">
+    
     <h1>Explore series</h1>
 
-    <div class="menus">
-            {% include 'series/_filter.html.twig' with {form : form} only %}
-            {{ knp_pagination_render(series) }}
+        <div class="row">
+            <div class="col-md-3">
+                    {% include 'series/_filter.html.twig' with {form : form} only %}
+            </div>
+
+            <div class="col-md-9">
+                <div class="d-flex justify-content-start mb">
+                    {{ knp_pagination_sortable(series, 'By alphabet', 's.title' )}}
+                    {{ knp_pagination_sortable(series, 'By date', 's.yearStart' )}}
+                </div>
+                <div class="grid">
+                    {% for serie in series %}
+                        {% include 'series/_preview.html.twig ' with {serie: serie} only %}
+                    {% endfor %}
+                </div>
+                <div style="margin-top:5em;">
+                    {{ knp_pagination_render(series) }}
+                </div>
+            </div>
+        </div>
     </div>
 
-    <table class="table">
+    <!--
+    <table class="container">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Title</th>
-                <th>Plot</th>
                 <th>Imdb</th>
                 <th>Poster</th>
-                <th>Director</th>
                 <th>YoutubeTrailer</th>
                 <th>Awards</th>
                 <th>YearStart</th>
@@ -29,15 +46,12 @@
         <tbody>
         {% for series in series %}
             <tr>
-                <td>{{ series.id }}</td>
                 <td>{{ series.title }}</td>
-                <td>{{ series.plot }}</td>
                 <td>{{ series.imdb }}</td>
                 <td><a href="{{path('series_poster', {'id':series.id})}}"> 
                 <img src="{{ path('series_poster', {'id':series.id})}}"/>
                 </a>
                 </td>
-                <td>{{ series.director }}</td>
                 <td>{{ series.youtubeTrailer }}</td>
                 <td>{{ series.awards }}</td>
                 <td>{{ series.yearStart }}</td>
@@ -53,6 +67,7 @@
         {% endfor %}
         </tbody>
     </table>
+    -->
 
-    <!--<a href="{{ path('series_new') }}">Create new</a> -!>
+    <!--<a href="{{ path('series_new') }}">Create new</a> -->
 {% endblock %}

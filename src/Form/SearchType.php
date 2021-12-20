@@ -19,7 +19,8 @@ class SearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-            's',TextType::class,
+            's',
+            TextType::class,
             [
                 'label' => false,
                 'required' => false,
@@ -42,15 +43,11 @@ class SearchType extends AbstractType
                 'expanded' => true,
                 'multiple' => true
             ])
-            ->add('followed', CheckboxType::class, [
+            ->add('followed', CheckboxType::class, [ //isset SESSION
                 'label' => 'Followed',
                 'required' => false,
-            ])
-            /* add nb follows, yearstart, end, nb votes/awards/nominations ?
-            ->add('release', ChoiceType::class, [
-                'label' => 'Followed',
-                'required' => false,
-            ])           */;
+            ]);
+            /* add nb follows, yearstart, end, nb votes/awards/nominations ?*/
     }
 
     public function configureOptions(OptionsResolver $resolver)

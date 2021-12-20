@@ -5,19 +5,11 @@
 {% block body %}
     <h1>Series</h1>
 
-    <table class="table">
+    <table class="container">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ series.id }}</td>
-            </tr>
             <tr>
                 <th>Title</th>
                 <td>{{ series.title }}</td>
-            </tr>
-            <tr>
-                <th>Plot</th>
-                <td>{{ series.plot }}</td>
             </tr>
             <tr>
                 <th>Imdb</th>
@@ -29,10 +21,6 @@
                 <img src="{{ path('series_poster', {'id':series.id})}}"/>
                 </a>
                 </td>
-            </tr>
-            <tr>
-                <th>Director</th>
-                <td>{{ series.director }}</td>
             </tr>
             <tr>
                 <th>YoutubeTrailer</th>
