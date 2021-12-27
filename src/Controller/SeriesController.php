@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Series;
+use App\Entity\Genre;
 use App\Form\SeriesType;
 use App\Form\SearchType;
 use App\Repository\SeriesRepository;
@@ -21,10 +22,18 @@ class SeriesController extends AbstractController
     /**
      * @Route("/", name="series_index", methods={"GET"})
      */
-    public function index(SeriesRepository $repository, Request $request): Response
+    public function index(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response
     {
         $search = new Search();
         $search->page = $request->get('page', 1);
+        if (isset($_GET['category'])) {
+            $repo = $entityManager->getRepository(Genre::class);
+            $c = $repo->createQueryBuilder('g')
+                ->where('g.name = :name')
+                ->setParameter('name', $_GET['category'])->getQuery()->getResult();
+
+            array_push($search->categories, $c[0]);
+        }
 
         $form = $this->createForm(SearchType::class, $search);
         $form->handleRequest($request);

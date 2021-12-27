@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Series;
 use App\Search\Search;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -49,7 +50,6 @@ class SeriesRepository extends ServiceEntityRepository
             ->andWhere('ca.id IN (:categories)')
             ->setParameter('categories', $search->categories);
         }    
-
         /*
         if (!empty($search->followed)) {
             $query = $query->join('s.user', 'u')
