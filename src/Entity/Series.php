@@ -200,7 +200,10 @@ class Series
 
     public function getYoutubeTrailer(): ?string
     {
-        return $this->youtubeTrailer;
+        // return only the id of the link
+        $results = NULL;
+        preg_match('/(http(s|):|)\/\/(www\.|)yout(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $this->youtubeTrailer, $results);    return $results[6];
+        // return $this->youtubeTrailer;
     }
 
     public function setYoutubeTrailer(?string $youtubeTrailer): self

@@ -1,81 +1,145 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
-      <div class="show">
-            <div class="col-md-4">
-                <h2 class="show-title"> {{ series.title }} </h2>
-                <em> {{ series.yearStart }} - {{ series.yearEnd }} </em>
-                <img src="{{ path('series_poster', {'id':series.id})}}" class="show-img-left"/>
-            </div>
+	<div class="container">
 
-            <div class="col-md-5">
-                <div class="d-flex justify-content-start mb">
-                </div>
-                    {% for serie in series %}
-                    {% endfor %}
-                <div style="margin-top:5em;">
-                </div>
-            </div>
-        </div>
-        <a href="{{ path('series_index') }}">back to list</a>
-    </div>
-    <!--
-    <table class="container">
-        <tbody>
-            <tr>
-                <th>Title</th>
-                <td>{{ series.title }}</td>
-            </tr>
-            <tr>
-                <th>Imdb</th>
-                <td>{{ series.imdb }}</td>
-            </tr>
-            <tr>
-                <th>Poster</th>
-                <td><a href="{{path('series_poster', {'id':series.id})}}"> 
-                <img src="{{ path('series_poster', {'id':series.id})}}"/>
-                </a>
-                </td>
-            </tr>
-            <tr>
-                <th>YoutubeTrailer</th>
-                <td>{{ series.youtubeTrailer }}</td>
-            </tr>
-            <tr>
-                <th>Awards</th>
-                <td>{{ series.awards }}</td>
-            </tr>
-            <tr>
-                <th>YearStart</th>
-                <td>{{ series.yearStart }}</td>
-            </tr>
-            <tr>
-                <th>YearEnd</th>
-                <td>{{ series.yearEnd }}</td>
-            </tr>
-            <tr>
-                <th>Seasons</th>
-                <td>
-                <ul>
-                    {% for season in series.getSeasons() %}
-                        <li> {{ season.number }} </li>
-                    {% endfor %}
-                </ul></td>
-            </tr>
-            <tr>
-                <th>Categories</th>
-                <td>
-                <ul>
-                    {% for category in series.getGenre() %}
-                        <li> {{ category.name }} </li>
-                    {% endfor %}
-                </ul></td>
-            </tr>
-        </tbody>
-    </table>
-    <a href="{{ path('series_index') }}">back to list</a>
-    -->
+		<div class="d-flex justify-content-around">
+			<div class="d-flex flex-column">
+				<h2>
+					{{ series.title }}
+				</h2>
+				<img src="{{ path('series_poster', {'id':series.id})}}" class="show-img-left"/>
 
-    
-{% endblock %}
+				<em>
+					{{ series.yearStart }}
+					-
+					{{ series.yearEnd }}
+				</em>
+
+				<section>
+					{% for category in series.getGenre() %}
+						<a href="{{path('series_index', {'category':category.name})}}">
+							<span>{{ category.name }}
+							</span>
+						</a>
+					{% endfor %}
+				</section>
+
+				{% if series.user %}
+					<!-- == if series.user contient session get user -->
+					<button class="btn btn-danger w-100">Follow</button>
+				{% else %}
+					<button class="btn btn-danger w-100">Unfollow</button>
+				{% endif %}
+
+				{% if series.user %}
+					<!-- ??? -->
+					<button class="btn btn-warning w-100 mt-2">Rate</button>
+				{% else %}
+					<em>
+						Already rated.
+					</em>
+				{% endif %}
+			</div>
+
+			<div class="ml-5 mt-5">
+				<div class="d-flex flex-column justify-content-center mb">
+					{% if "N/A" not in series.awards %}
+						<h5 class="text-warning">
+							{{ series.awards }}
+						</h5>
+					{% endif %}
+					<h5>
+						{{ series.imdb }}
+					</h5>
+					<h5>
+						Followed by
+						{{ series.user|length }}
+						users.
+					</h5>
+
+					<figure class="w-100 h-300">
+						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ series.youtubeTrailer }}"></iframe>
+					</figure>
+					<p>
+						{{ series.plot }}</p>
+
+					<h5>
+						Actors
+					</h5>
+					<ul class="list-group list-group-horizontal-sm">
+						{% for actor in series.actor %}
+							<li class="list-group-item list-group-item-danger">{{ actor.getName() }}
+							</li>
+							<li>
+							{% endfor %}
+						</ul>
+
+
+					</div>
+					{% for serie in series %}{% endfor %}
+					<div style="margin-top:5em;"></div>
+				</div>
+			</div>
+			<a href="{{ path('series_index') }}">back to list</a>
+		</div>
+
+		<!--
+														    <table class="container">
+														        <tbody>
+														            <tr>
+														                <th>Title</th>
+														                <td>{{ series.title }}</td>
+														            </tr>
+														            <tr>
+														                <th>Imdb</th>
+														                <td>{{ series.imdb }}</td>
+														            </tr>
+														            <tr>
+														                <th>Poster</th>
+														                <td><a href="{{path('series_poster', {'id':series.id})}}"> 
+														                <img src="{{ path('series_poster', {'id':series.id})}}"/>
+														                </a>
+														                </td>
+														            </tr>
+														            <tr>
+														                <th>YoutubeTrailer</th>
+														                <td>{{ series.youtubeTrailer }}</td>
+														            </tr>
+														            <tr>
+														                <th>Awards</th>
+														                <td>{{ series.awards }}</td>
+														            </tr>
+														            <tr>
+														                <th>YearStart</th>
+														                <td>{{ series.yearStart }}</td>
+														            </tr>
+														            <tr>
+														                <th>YearEnd</th>
+														                <td>{{ series.yearEnd }}</td>
+														            </tr>
+														            <tr>
+														                <th>Seasons</th>
+														                <td>
+														                <ul>
+														                    {% for season in series.getSeasons() %}
+														                        <li> {{ season.number }} </li>
+														                    {% endfor %}
+														                </ul></td>
+														            </tr>
+														            <tr>
+														                <th>Categories</th>
+														                <td>
+														                <ul>
+														                    {% for category in series.getGenre() %}
+														                        <li> {{ category.name }} </li>
+														                    {% endfor %}
+														                </ul></td>
+														            </tr>
+														        </tbody>
+														    </table>
+														    <a href="{{ path('series_index') }}">back to list</a>
+														    -->
+
+
+	{% endblock %}
