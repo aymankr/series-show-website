@@ -27,5 +27,9 @@
 		<button type="submit" class="btn btn-danger w-30">Register</button>
 		{{ form_end(registrationForm) }}
 
+		<p>
+        	You already have an account ? <a href="{{ path('user_login') }}">Log in here</a>.
+    	</p>
+
 	</div>
 {% endblock %}

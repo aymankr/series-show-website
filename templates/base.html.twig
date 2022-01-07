@@ -59,19 +59,25 @@
 					Account
 				</button>
 				<div class="dropdown-menu">
-					<a class="dropdown-item" href="http://127.0.0.1:8000/register">Inscription</a>
-					<a class="dropdown-item" href="http://127.0.0.1:8000/connexion">Connexion</a>
-					<!--<a class="dropdown-item" href="#">Déconnexion</a> -->
+
+				{% if app.user %}
+					<a class="dropdown-item" href="{{ path('user_account') }}">Account</a>
+					<a class="dropdown-item" href="{{ path('user_logout') }}">Log out</a>
+				{% else %}
+					<a class="dropdown-item" href="{{ path('user_register') }}">Register</a>
+					<a class="dropdown-item" href="{{ path('user_login') }}">Log in</a>
+				{% endif %}
+				
 				</div>
 			</li>
 			<li>
-				<a href="http://127.0.0.1:8000/home" class="navbar-brand mb-0 h1">Home</a>
+				<a href="{{ path('home') }}" class="navbar-brand mb-0 h1">Home</a>
 			</li>
 			<li>
 				<a href="" class="navbar-brand mb-0 h1">My series</a>
 			</li>
 			<li>
-				<a href="http://127.0.0.1:8000/series" class="navbar-brand mb-0 h1">Explore</a>
+				<a href="{{ path('series_index') }}" class="navbar-brand mb-0 h1">Explore</a>
 			</li>
 			<li>
 				<a href="" class="navbar-brand mb-0 h1">About</a>
