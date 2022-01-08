@@ -47,6 +47,38 @@ class SeriesController extends AbstractController
     }
 
     /**
+     * @Route("/my-series", name="user_series", methods={"GET"})
+     */
+    public function user_series(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response 
+    {
+        if ($this->getUser() == null) {
+            return $this->render('security/login.html.twig');
+        }
+
+        $search = new Search();
+        $search->page = $request->get('page', 1);
+        $search->followed = true;
+        if (isset($_GET['category'])) {
+            $repo = $entityManager->getRepository(Genre::class);
+            $c = $repo->createQueryBuilder('g')
+                ->where('g.name = :name')
+                ->setParameter('name', $_GET['category'])->getQuery()->getResult();
+
+            array_push($search->categories, $c[0]);
+        }
+
+        $form = $this->createForm(SearchType::class, $search);
+        $form->handleRequest($request);
+
+        $series = $repository->getSeries($search);
+
+        return $this->render('series/user_series.html.twig', [
+            'series' => $series,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
      * @Route("/new", name="series_new", methods={"GET", "POST"})
      */
     public function new(Request $request, EntityManagerInterface $entityManager): Response

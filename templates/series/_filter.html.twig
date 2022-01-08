@@ -11,8 +11,12 @@
 
     {{ form_row(form.categories) }}
 
-    <h4>Followed series</h4>
+    {% block followed %}
 
-    {{ form_row(form.followed) }}
+        <h4>Followed series</h4>
+
+        {{ form_row(form.followed) }}
+    
+    {% endblock %}
 
 {{ form_end(form) }}

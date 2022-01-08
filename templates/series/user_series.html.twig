@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My series{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+    
+        <h1>My series</h1>
+    
+            <div class="row">
+                <div class="col-md-3">
+                        {% include 'series/_filter_my_series.html.twig' with {form : form} only %}
+                </div>
+    
+                <div class="col-md-9">
+                    <div class="d-flex justify-content-start mb">
+                        {{ knp_pagination_sortable(series, 'By alphabet', 's.title' )}}
+                        {{ knp_pagination_sortable(series, 'By date', 's.yearStart' )}}
+                    </div>
+                    <div class="grid">
+                        {% for serie in series %}
+                            {% include 'series/_preview.html.twig' with {serie: serie} only %}
+                        {% endfor %}
+                    </div>
+                    <div style="margin-top:5em;">
+                        {{ knp_pagination_render(series) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+{% endblock %}

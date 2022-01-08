@@ -50,12 +50,11 @@ class SeriesRepository extends ServiceEntityRepository
             ->andWhere('ca.id IN (:categories)')
             ->setParameter('categories', $search->categories);
         }    
-        /*
+        
         if (!empty($search->followed)) {
             $query = $query->join('s.user', 'u')
             ->andWhere('u.id IS NOT NULL');
-        }        
-        */
+        }
 
         $query = $query->getQuery();
 

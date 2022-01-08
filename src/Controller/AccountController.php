@@ -12,7 +12,7 @@ class AccountController extends AbstractController
     /**
      * @Route("/account", name="user_account")
      */
-    public function index(AuthenticationUtils $authenticationUtils): Response
+    public function account(AuthenticationUtils $authenticationUtils): Response
     {
         // Verify that a user is loged in
         if (!$this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED'))
