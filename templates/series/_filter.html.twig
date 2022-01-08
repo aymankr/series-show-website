@@ -13,9 +13,9 @@
 
     {% block followed %}
 
-        <h4>Followed series</h4>
+        <h4 class="d-inline">Followed series</h4>
 
-        {{ form_row(form.followed) }}
+        {{ form_row(form.followed, { 'attr': {'class': 'd-inline' }}) }}
     
     {% endblock %}
 

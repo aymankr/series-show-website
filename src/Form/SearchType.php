@@ -43,7 +43,7 @@ class SearchType extends AbstractType
                 'multiple' => true
             ])
             ->add('followed', CheckboxType::class, [ //isset SESSION
-                'label' => 'Followed',
+                'label' => false,
                 'required' => false,
             ]);
             /* add nb follows, yearstart, end, nb votes/awards/nominations ?*/
