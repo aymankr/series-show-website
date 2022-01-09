@@ -9,14 +9,16 @@
     <div class="preview-body">
         <div class="preview-title"> {{ serie.yearStart }}
         </div>
-        <!--
+
         <div>
-            {% if serie.user != NULL %}
-                <div class="text text-warning">Followed</div>
+            {% if user != NULL %}   <!-- Condition doesn't work -> need to be fixed -->
+                <a class="btn btn-primary" href="{{ path('unfollow', {'serieID': serie.id}) }}">Unfollow</a>
+            {% else %}
+                <a class="btn btn-primary" href="{{ path('follow', {'serieID': serie.id}) }}">Follow</a>
             {% endif %}
-        </div>-->
+        </div>
         <!-- imdb, youtube trailer, awards, year strart, end, action show-->
-        <p class="text text-muted"> {{ serie.plot }}</p>
+        <p class="text text-muted">{{ serie.plot }}</p>
 
         <div>
             {% for genre in serie.genre %}

@@ -19,7 +19,7 @@
                 </div>
                 <div class="grid">
                     {% for serie in series %}
-                        {% include 'series/_preview.html.twig' with {serie: serie} only %}
+                        {% include 'series/_preview.html.twig' with {serie: serie, user: user} only %}
                     {% endfor %}
                 </div>
                 <div style="margin-top:5em;">

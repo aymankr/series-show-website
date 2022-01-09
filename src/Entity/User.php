@@ -252,7 +252,7 @@ class User implements UserInterface
 
         return $this;
     }
-
+    
     // To implement UserInterface 
 
     public function getUserIdentifier()

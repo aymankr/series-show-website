@@ -8,11 +8,14 @@ use App\Form\SeriesType;
 use App\Form\SearchType;
 use App\Repository\SeriesRepository;
 use App\Search\Search;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
+use function PHPUnit\Framework\stringContains;
 
 /**
  * @Route("/series")
@@ -39,10 +42,10 @@ class SeriesController extends AbstractController
         $form->handleRequest($request);
 
         $series = $repository->getSeries($search);
-
         return $this->render('series/index.html.twig', [
             'series' => $series,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'user' => $this->getUser()
         ]);
     }
 
@@ -52,7 +55,7 @@ class SeriesController extends AbstractController
     public function user_series(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response 
     {
         if ($this->getUser() == null) {
-            return $this->render('security/login.html.twig');
+            return $this->redirectToRoute('user_login');
         }
 
         $search = new Search();
@@ -74,8 +77,41 @@ class SeriesController extends AbstractController
 
         return $this->render('series/user_series.html.twig', [
             'series' => $series,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'user' => $this->getUser()
         ]);
+    }
+
+    /**
+     * @Route("/follow_serie/{serieID}", name="follow")
+     */
+    public function follow(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('user_login');
+        }
+
+        $this->getUser()->addSeries($repository->findOneById($serieID));
+        $entityManager->flush();    // Update the changes made in the databse
+        return $this->redirect($request->headers->get('referer'));
+    }
+
+    /**
+     * @Route("/unfollow_serie/{serieID}", name="unfollow")
+     */
+    public function unfollow(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('user_login');
+        }
+
+        $this->getUser()->removeSeries($repository->findOneById($serieID));
+        $entityManager->flush();    // Update the changes made in the databse
+
+        if (strpos($request->headers->get('referer'), 'my-series') !== false) {
+            return $this->render('series/user_series.html.twig');
+        }
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**
@@ -84,7 +120,7 @@ class SeriesController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $series = new Series();
-        $form = $this->createForm(SeriesType::class, $series);
+        $form = $this->createForm(SeriesType::class, $series);  
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
