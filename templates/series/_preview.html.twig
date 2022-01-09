@@ -11,7 +11,7 @@
         </div>
 
         <div>
-            {% if user != NULL %}   <!-- Condition doesn't work -> need to be fixed -->
+            {% if user != NULL and serie in user.getSeries() %}
                 <a class="btn btn-primary" href="{{ path('unfollow', {'serieID': serie.id}) }}">Unfollow</a>
             {% else %}
                 <a class="btn btn-primary" href="{{ path('follow', {'serieID': serie.id}) }}">Follow</a>

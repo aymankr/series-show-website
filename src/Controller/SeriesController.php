@@ -142,9 +142,34 @@ class SeriesController extends AbstractController
     public function show(Series $series): Response
     {
         return $this->render('series/show.html.twig', [
-            'series' => $series
+            'series' => $series,
+            'user' => $this->getUser()
         ]);
     }
+
+    /**
+     * @Route("/rate/{serieID}", name="series_rate", methods={"GET"})
+     */
+    public function index_rate(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
+    {
+        $serie = $repository->findOneById(($serieID));
+        return $this->render('series/rate.html.twig', [
+            'serie'=> $serie,
+            'user' => $this->getUser()
+        ]);
+    }
+
+    /**
+     * @Route("/rate/{serieID}", name="series_save_rate", methods={"GET"})
+     */
+    public function save_rate(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
+    {
+        $serie = $repository->findOneById(($serieID));
+        return $this->render('series/rate.html.twig', [
+            'serie'=> $serie,
+            'user' => $this->getUser()
+        ]);
+    }    
 
     /**
      * @Route("/poster/{id}", name="series_poster", methods={"GET"})

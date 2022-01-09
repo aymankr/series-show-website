@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		<style>
+			textarea {
+				background: #333333;
+				padding: 1em;
+				width: 100%;
+				height: 10em;
+				font-size: 1em;
+				line-height: 1.5em;
+				box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 0, 0, 0);
+                color:white !important;
+			}
+		</style>
+
+		<a class="btn btn-warning" href="{{ path('series_show', {'id': serie.id }) }}">Back</a>
+		<h4>Rating for "{{ serie.title }}"</h4>
+
+		<section>
+			<p>
+				<textarea style="border: 1px solid #BBB; color:#444" rows="4" cols="60"></textarea>
+			</p>
+		</section>
+        
+        <a class="btn btn-primary" href="{{ path('series_save_rate', {'id': serie.id }) }}">Save rating</a>
+		<a class="btn btn-danger" href="{{ path('series_show', {'id': serie.id }) }}">Delete rating</a>
+
+	</div>
+
+{% endblock %}
