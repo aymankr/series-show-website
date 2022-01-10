@@ -8,7 +8,6 @@ use App\Form\SeriesType;
 use App\Form\SearchType;
 use App\Repository\SeriesRepository;
 use App\Search\Search;
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -146,30 +145,6 @@ class SeriesController extends AbstractController
             'user' => $this->getUser()
         ]);
     }
-
-    /**
-     * @Route("/rate/{serieID}", name="series_rate", methods={"GET"})
-     */
-    public function index_rate(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
-    {
-        $serie = $repository->findOneById(($serieID));
-        return $this->render('series/rate.html.twig', [
-            'serie'=> $serie,
-            'user' => $this->getUser()
-        ]);
-    }
-
-    /**
-     * @Route("/rate/{serieID}", name="series_save_rate", methods={"GET"})
-     */
-    public function save_rate(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
-    {
-        $serie = $repository->findOneById(($serieID));
-        return $this->render('series/rate.html.twig', [
-            'serie'=> $serie,
-            'user' => $this->getUser()
-        ]);
-    }    
 
     /**
      * @Route("/poster/{id}", name="series_poster", methods={"GET"})
