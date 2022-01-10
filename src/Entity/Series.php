@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Criteria;
 
 /**
  * Series
@@ -363,6 +364,15 @@ class Series
     public function getSeasons(): Collection
     {
         return $this->seasons;
+    }
+
+    /**
+     * @return Collection|Season[] ordered by number
+     */
+    public function getSeasonsOrdered(): Collection
+    {
+        $sort = new Criteria(null, ['number' => Criteria::ASC]);
+        return $this->seasons->matching($sort);
     }
 
     public function addSeason(Season $season): self

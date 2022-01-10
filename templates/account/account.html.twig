@@ -11,8 +11,16 @@
     <div>
         <p>Username: {{ user.name }}</p>
         <p>Email: {{ user.email }}</p>
-        <p>Register date: {{ user.registerDate.format('Y-m-d H:i:s') }}</p>
-        <p>Contry: {{ user.country }}</p>
+        <p>Register date: {{ user.registerDate.format('Y-m-d') }}</p>
+
+        <p>Contry: 
+            {% if user.country == NULL %}
+                Not specified
+            {% else %}
+                {{ user.country }}
+            {% endif %}
+        </p>
+
     </div>
 
     <a class="btn btn-primary" href="{{ path('user_series') }}">See my series</a>

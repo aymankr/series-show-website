@@ -4,33 +4,47 @@
 	<div class="container">
 
 		<div class="d-flex justify-content-around">
+
+			<!-- Left column -->
 			<div class="d-flex flex-column">
-				<h2>
-					{{ series.title }}
-				</h2>
+
+				<!-- Title and poster -->
+				<h2>{{ series.title }}</h2>
 				<img src="{{ path('series_poster', {'id':series.id})}}" class="show-img-left"/>
 
+				<!-- Year start and end -->
 				<em>
-					{{ series.yearStart }}
+					{% if series.yearStart == NULL %}
+						Unknown
+					{% else %}
+						{{ series.yearStart }}
+					{% endif %}
 					-
-					{{ series.yearEnd }}
+					{% if series.yearEnd == NULL %}
+						Still continuing today !
+					{% else %}
+						{{ series.yearEnd }}
+					{% endif %}
 				</em>
 
+				<!-- Genres -->
 				<section class="mt-2">
+					Genres: 
 					{% for category in series.getGenre() %}
 						<a href="{{path('series_index', {'category':category.name})}}">
-							<span>{{ category.name }}
-							</span>
+							<span>{{ category.name }}</span>
 						</a>
 					{% endfor %}
 				</section>
 
+				<!-- Follow or unfollow button -->
 				{% if user != NULL and series in user.getSeries() %}
 					<a class="btn btn-primary" href="{{ path('unfollow', {'serieID': series.id}) }}">Unfollow</a>
 				{% else %}
 					<a class="btn btn-primary" href="{{ path('follow', {'serieID': series.id}) }}">Follow</a>
 				{% endif %}
 
+				<!-- Rate button -->
 				{% if series.user %}
 					<!-- ??? -->
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('series_rate', {'serieID': series.id}) }}">Rate</a>
@@ -42,45 +56,82 @@
 			
 			</div>
 
+			<!-- Right column -->
 			<div class="ml-5 mt-5">
+
+				<!-- First section: Series informations -->
 				<div class="d-flex flex-column justify-content-center mb">
+
+					<!-- Awards -->
 					{% if "N/A" not in series.awards %}
 						<h5 class="text-warning">
 							{{ series.awards }}
 						</h5>
 					{% endif %}
-					<h5>
-						{{ series.imdb }}
-					</h5>
+					
+					<!-- Number of followers -->
 					<h5>
 						Followed by
 						{{ series.user|length }}
 						user(s).
 					</h5>
 
+					<!-- Trailer -->
 					<figure class="w-100 h-300">
 						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ series.youtubeTrailer }}"></iframe>
 					</figure>
 					<p>
-						{{ series.plot }}</p>
+						{{ series.plot }}
+					</p>
 
-					<h5>
-						Actors
-					</h5>
+					<!-- Actors list -->
+					<h5>Actors</h5>
 					<ul class="list-group list-group-horizontal-sm">
 						{% for actor in series.actor %}
-							<li class="list-group-item list-group-item-danger">{{ actor.getName() }}
-							</li>
-							<li>
-							{% endfor %}
-						</ul>
+							<li class="list-group-item list-group-item-danger">{{ actor.getName() }}</li>
+						{% endfor %}
+					</ul>
 
-
-					</div>
-					{% for serie in series %}{% endfor %}
-					<div style="margin-top:5em;"></div>
 				</div>
+
+				<!-- Second section: Series seasons & episodes -->
+				<div style="margin-top:5em;">
+					<h3>Seasons and episodes</h3>
+					{% for season in series.getSeasonsOrdered() %}
+
+						<!-- Season n -->
+						<div style="margin-bottom: 4em;">
+							<h5>Season {{ season.number }}</h5>
+							<ul class="list-group list-group-vertical-sm">
+
+								{% for episode in season.getEpisodesOrdered() %}
+									<li class="list-group-item list-group-item-warning">
+
+										<!-- Episode informations -->
+										Episode n°{{ episode.getNumber() }}: {{ episode.getTitle() }} </br>
+										Release date: {{ episode.date.format('Y-m-d') }} </br>
+
+										<!-- Mark as seen or not seen button -->
+										{% if user != NULL and episode in user.getEpisode() %}
+											<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'episodeID': episode.id}) }}">
+												Mark as not seen
+											</a>
+										{% else %}
+											<a class="btn btn-primary" href="{{ path('mark_as_seen', {'episodeID': episode.id}) }}">
+												Mark as seen
+											</a>
+										{% endif %}
+
+									</li>
+								{% endfor %}
+							</ul>
+						</div>
+
+					{% endfor %}
+				</div>
+
 			</div>
-			<a href="{{ path('series_index') }}">back to list</a>
 		</div>
-	{% endblock %}
+		<a href="{{ path('series_index') }}">back to list</a>
+	</div>
+{% endblock %}

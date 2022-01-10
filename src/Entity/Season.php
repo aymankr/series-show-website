@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,6 +40,16 @@ class Season
      */
     private $series;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="Episode", mappedBy="season")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="season_id", referencedColumnName="id")
+     * })
+     */
+    private $episodes;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -67,5 +79,20 @@ class Season
         return $this;
     }
 
+    /**
+     * @return Collection|Season[]
+     */
+    public function getEpisodes(): Collection
+    {
+        return $this->episodes;
+    }
 
+    /**
+     * @return Collection|Season[] ordered by number
+     */
+    public function getEpisodesOrdered(): Collection
+    {
+        $sort = new Criteria(null, ['number' => Criteria::ASC]);
+        return $this->episodes->matching($sort);
+    }
 }

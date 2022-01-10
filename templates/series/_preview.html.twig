@@ -1,6 +1,6 @@
 <div class="preview">
 
-    <h5 class="preview-title"> {{ serie.title }} </h5>
+    <a href="{{path('series_show', {'id':serie.id})}}" class="preview-title"> {{ serie.title }} </a>
     
     <a href="{{path('series_show', {'id':serie.id})}}"> 
                 <img src="{{ path('series_poster', {'id':serie.id})}}" class="preview-img-top" style="  max-width:100%;

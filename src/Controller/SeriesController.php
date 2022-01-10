@@ -109,7 +109,7 @@ class SeriesController extends AbstractController
         $entityManager->flush();    // Update the changes made in the databse
 
         if (strpos($request->headers->get('referer'), 'my-series') !== false) {
-            return $this->render('series/user_series.html.twig');
+            return $this->redirectToRoute('user_series');
         }
         return $this->redirect($request->headers->get('referer'));
     }
