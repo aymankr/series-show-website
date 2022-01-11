@@ -5,7 +5,7 @@
 		<a class="btn btn-warning" href="{{ path('series_show', {'id': serie.id }) }}">Back</a>
 		<h4>Rating for "{{ serie.title }}"</h4>
 
-		<a class="btn btn-primary" href="{{ path('series_save_rate', {'serieID': serie.id }) }}">Save rating</a>
+		<a class="btn btn-primary" href="{{ path('series_rate', {'serieID': serie.id }) }}">Save rating</a>
 		<a class="btn btn-danger" href="{{ path('series_show', {'id': serie.id }) }}">Delete rating</a>
 
 		{{ form_start(form) }}
@@ -15,7 +15,6 @@
 
 
 		{{ form_end(form) }}
-
 	</div>
 
 {% endblock %}

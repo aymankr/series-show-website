@@ -138,9 +138,13 @@ class SeriesController extends AbstractController
     /**
      * @Route("/show/{id}", name="series_show", methods={"GET"})
      */
-    public function show(Series $series): Response
+    public function show(Series $series, $id,EntityManagerInterface $entityManager): Response
     {
+        $external_rating = $entityManager->createQuery("SELECT r FROM App:ExternalRating r
+                        WHERE r.id = :id")->setParameter('id', $id)->getResult()[0];
+
         return $this->render('series/show.html.twig', [
+            'ext_rating' => $external_rating,
             'series' => $series,
             'user' => $this->getUser()
         ]);
