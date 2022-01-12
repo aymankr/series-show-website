@@ -59,7 +59,7 @@
 				<!-- First section: Series informations -->
 				<div class="d-flex flex-column justify-content-center mb">
 
-					<h4> {{ ext_rating.value }} </h4>
+					<h4> {{ series.getExternalRatingValue() }} </h4>
 
 					<!-- Awards -->
 					{% if "N/A" not in series.awards %}

@@ -9,7 +9,7 @@
     <div class="preview-body">
         <div class="preview-title"> {{ serie.yearStart }}
         </div>
-
+        <em> {{ serie.getExternalRatingValue() }} </em>
         <div>
             {% if user != NULL and serie in user.getSeries() %}
                 <a class="btn btn-primary" href="{{ path('unfollow', {'serieID': serie.id}) }}">Unfollow</a>

@@ -130,6 +130,13 @@ class Series
     private $ratings;
 
     /**
+     * @var \ExternalRating
+     * 
+     * @ORM\OneToOne(targetEntity="ExternalRating", mappedBy="series")
+     */
+    private $externalRating;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -425,5 +432,19 @@ class Series
             }
         }
         return null;
+    }
+
+    /**
+     * @return ExternalRating
+     */
+    public function getExternalRating() {
+        return $this->externalRating;
+    }
+
+    /**
+     * @return ExternalRating
+     */
+    public function getExternalRatingValue() {
+        return $this->externalRating->getValue();
     }
 }

@@ -30,8 +30,8 @@ class SeriesRepository extends ServiceEntityRepository
 
     public function getSeries(Search $search): PaginationInterface {
         $query = $this->createQueryBuilder('s')
-                ->select('s', 'g')
-                ->join('s.genre', 'g');
+                ->select('s', 'g', 'e')
+                ->join('s.genre', 'g')->join('s.externalRating', 'e');
 
         if (!empty($search->s)) {
             $query = $query->andWhere('s.title LIKE :search')

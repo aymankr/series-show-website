@@ -8,15 +8,20 @@
     <h1>Explore series</h1>
 
         <div class="row">
+            <!-- Search filtrers -->
             <div class="col-md-3">
                     {% include 'series/_filter.html.twig' with {form : form} only %}
             </div>
 
             <div class="col-md-9">
+                <!-- sort by alphabet, date or rating -->
                 <div class="d-flex justify-content-start mb">
                     {{ knp_pagination_sortable(series, 'By alphabet', 's.title' )}}
                     {{ knp_pagination_sortable(series, 'By date', 's.yearStart' )}}
+                    {{ knp_pagination_sortable(series, 'By rating', 'e.value' )}}
                 </div>
+
+
                 <div class="grid">
                     {% for serie in series %}
                         {% include 'series/_preview.html.twig' with {serie: serie, user: user} only %}
@@ -28,46 +33,5 @@
             </div>
         </div>
     </div>
-
-    <!--
-    <table class="container">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Imdb</th>
-                <th>Poster</th>
-                <th>YoutubeTrailer</th>
-                <th>Awards</th>
-                <th>YearStart</th>
-                <th>YearEnd</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for series in series %}
-            <tr>
-                <td>{{ series.title }}</td>
-                <td>{{ series.imdb }}</td>
-                <td><a href="{{path('series_poster', {'id':series.id})}}"> 
-                <img src="{{ path('series_poster', {'id':series.id})}}"/>
-                </a>
-                </td>
-                <td>{{ series.youtubeTrailer }}</td>
-                <td>{{ series.awards }}</td>
-                <td>{{ series.yearStart }}</td>
-                <td>{{ series.yearEnd }}</td>
-                <td>
-                    <a href="{{ path('series_show', {'id': series.id}) }}">show</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="11">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    -->
-
     <!--<a href="{{ path('series_new') }}">Create new</a> -->
 {% endblock %}
