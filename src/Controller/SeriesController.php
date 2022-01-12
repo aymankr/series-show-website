@@ -14,8 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-use function PHPUnit\Framework\stringContains;
-
 /**
  * @Route("/series")
  */
@@ -40,77 +38,33 @@ class SeriesController extends AbstractController
         $form = $this->createForm(SearchType::class, $search);
         $form->handleRequest($request);
 
-        $series = $repository->getSeries($search);
+        $serie = $repository->getSeries($search);
         return $this->render('series/index.html.twig', [
-            'series' => $series,
-            'form' => $form->createView(),
-            'user' => $this->getUser()
+            'serie' => $serie,
+            'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/my-series", name="user_series", methods={"GET"})
+     * @Route("/show/{id}", name="series_show", methods={"GET"})
      */
-    public function user_series(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response 
+    public function show(Series $serie): Response
     {
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
-
-        $search = new Search();
-        $search->page = $request->get('page', 1);
-        $search->followed = true;
-        if (isset($_GET['category'])) {
-            $repo = $entityManager->getRepository(Genre::class);
-            $c = $repo->createQueryBuilder('g')
-                ->where('g.name = :name')
-                ->setParameter('name', $_GET['category'])->getQuery()->getResult();
-
-            array_push($search->categories, $c[0]);
-        }
-
-        $form = $this->createForm(SearchType::class, $search);
-        $form->handleRequest($request);
-
-        $series = $repository->getSeries($search);
-
-        return $this->render('series/user_series.html.twig', [
-            'series' => $series,
-            'form' => $form->createView(),
-            'user' => $this->getUser()
+        return $this->render('series/show.html.twig', [
+            'serie' => $serie,
         ]);
     }
 
     /**
-     * @Route("/follow_serie/{serieID}", name="follow")
+     * @Route("/poster/{id}", name="series_poster", methods={"GET"})
      */
-    public function follow(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
+    public function poster(Series $serie): Response
     {
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
-
-        $this->getUser()->addSeries($repository->findOneById($serieID));
-        $entityManager->flush();    // Update the changes made in the databse
-        return $this->redirect($request->headers->get('referer'));
-    }
-
-    /**
-     * @Route("/unfollow_serie/{serieID}", name="unfollow")
-     */
-    public function unfollow(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
-
-        $this->getUser()->removeSeries($repository->findOneById($serieID));
-        $entityManager->flush();    // Update the changes made in the databse
-
-        if (strpos($request->headers->get('referer'), 'my-series') !== false) {
-            return $this->redirectToRoute('user_series');
-        }
-        return $this->redirect($request->headers->get('referer'));
+        return new Response(
+            stream_get_contents($serie->getPoster()),
+            200,
+            array('Content-Type' => 'image/jpeg')
+        );
     }
 
     /**
@@ -133,28 +87,5 @@ class SeriesController extends AbstractController
             'series' => $series,
             'form' => $form,
         ]);
-    }
-
-    /**
-     * @Route("/show/{id}", name="series_show", methods={"GET"})
-     */
-    public function show(Series $series, $id,EntityManagerInterface $entityManager): Response
-    {
-        return $this->render('series/show.html.twig', [
-            'series' => $series,
-            'user' => $this->getUser()
-        ]);
-    }
-
-    /**
-     * @Route("/poster/{id}", name="series_poster", methods={"GET"})
-     */
-    public function poster(Series $series): Response
-    {
-        return new Response(
-            stream_get_contents($series->getPoster()),
-            200,
-            array('Content-Type' => 'image/jpeg')
-        );
     }
 }

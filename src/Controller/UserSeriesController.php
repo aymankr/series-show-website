@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Episode;
 use App\Entity\Genre;
+use App\Entity\Series;
 use App\Form\SearchType;
 use App\Repository\SeriesRepository;
 use App\Repository\EpisodeRepository;
@@ -42,39 +44,38 @@ class UserSeriesController extends AbstractController
         $form = $this->createForm(SearchType::class, $search);
         $form->handleRequest($request);
 
-        $series = $repository->getSeries($search);
+        $serie = $repository->getSeries($search);
 
         return $this->render('series/user/user_series.html.twig', [
-            'series' => $series,
+            'serie' => $serie,
             'form' => $form->createView(),
-            'user' => $this->getUser()
         ]);
     }
 
     /**
-     * @Route("/follow_serie/{serieID}", name="follow")
+     * @Route("/follow_serie/{id}", name="follow")
      */
-    public function follow(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
+    public function follow(Series $serie, Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($this->getUser() == null) {
             return $this->redirectToRoute('user_login');
         }
 
-        $this->getUser()->addSeries($repository->find($serieID));
+        $this->getUser()->addSeries($serie);
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }
 
     /**
-     * @Route("/unfollow_serie/{serieID}", name="unfollow")
+     * @Route("/unfollow_serie/{id}", name="unfollow")
      */
-    public function unfollow(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
+    public function unfollow(Series $serie, Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($this->getUser() == null) {
             return $this->redirectToRoute('user_login');
         }
 
-        $this->getUser()->removeSeries($repository->find($serieID));
+        $this->getUser()->removeSeries($serie);
         $entityManager->flush();    // Update the changes made in the databse
 
         if (strpos($request->headers->get('referer'), 'my-series') !== false) {
@@ -84,32 +85,30 @@ class UserSeriesController extends AbstractController
     }
 
     /**
-     * @Route("/mark_as_seen/episode{episodeID}", name="mark_as_seen")
+     * @Route("/mark_as_seen/episode{id}", name="mark_as_seen")
      */
-    public function mark_as_seen(int $episodeID, Request $request, EpisodeRepository $repository, 
-                                 EntityManagerInterface $entityManager): Response
+    public function mark_as_seen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($this->getUser() == null) {
             return $this->redirectToRoute('user_login');
         }
 
 
-        $this->getUser()->addEpisode($repository->find($episodeID));
+        $this->getUser()->addEpisode($episode);
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }
 
     /**
-     * @Route("/mark_as_not_seen/episode{episodeID}", name="mark_as_not_seen")
+     * @Route("/mark_as_not_seen/episode{id}", name="mark_as_not_seen")
      */
-    public function mark_as_not_seen(int $episodeID, Request $request, EpisodeRepository $repository, 
-                                     EntityManagerInterface $entityManager): Response
+    public function mark_as_not_seen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($this->getUser() == null) {
             return $this->redirectToRoute('user_login');
         }
 
-        $this->getUser()->removeEpisode($repository->find($episodeID));
+        $this->getUser()->removeEpisode($episode);
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }

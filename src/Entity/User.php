@@ -257,7 +257,7 @@ class User implements UserInterface
 
     public function getUserIdentifier()
     {
-        return $this->id;
+        return $this->getId();
     }
 
     public function getSalt()

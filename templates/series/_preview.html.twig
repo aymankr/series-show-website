@@ -1,20 +1,20 @@
 <div class="preview">
 
-    <a href="{{path('series_show', {'id':serie.id})}}" class="preview-title"> {{ serie.title }} </a>
+    <a href="{{path('series_show', {'id': serie.id})}}" class="preview-title"> {{ serie.title }} </a>
     
-    <a href="{{path('series_show', {'id':serie.id})}}"> 
-                <img src="{{ path('series_poster', {'id':serie.id})}}" class="preview-img-top" style="  max-width:100%;
-                                                                                                        max-height:80%;"/>
+    <a href="{{path('series_show', {'id': serie.id})}}"> 
+                <img src="{{ path('series_poster', {'id': serie.id})}}" class="preview-img-top" 
+                     style="  max-width:100%; max-height:80%;" alt="poster"/>
                 </a>
     <div class="preview-body">
         <div class="preview-title"> {{ serie.yearStart }}
         </div>
         <em> {{ serie.getExternalRatingValue() }} </em>
         <div>
-            {% if user != NULL and serie in user.getSeries() %}
-                <a class="btn btn-primary" href="{{ path('unfollow', {'serieID': serie.id}) }}">Unfollow</a>
+            {% if app.user != NULL and serie in app.user.series %}
+                <a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
             {% else %}
-                <a class="btn btn-primary" href="{{ path('follow', {'serieID': serie.id}) }}">Follow</a>
+                <a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
             {% endif %}
         </div>
         <!-- imdb, youtube trailer, awards, year strart, end, action show-->

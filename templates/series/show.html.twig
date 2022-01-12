@@ -9,28 +9,28 @@
 			<div class="d-flex flex-column">
 
 				<!-- Title and poster -->
-				<h2>{{ series.title }}</h2>
-				<img src="{{ path('series_poster', {'id':series.id})}}" class="show-img-left" alt="poster"/>
+				<h2>{{ serie.title }}</h2>
+				<img src="{{ path('series_poster', {'id': serie.id})}}" class="show-img-left" alt="poster"/>
 
 				<!-- Year start and end -->
 				<em>
-					{% if series.yearStart == NULL %}
+					{% if serie.yearStart == NULL %}
 						Unknown
 					{% else %}
-						{{ series.yearStart }}
+						{{ serie.yearStart }}
 					{% endif %}
 					-
-					{% if series.yearEnd == NULL %}
+					{% if serie.yearEnd == NULL %}
 						Still continuing today !
 					{% else %}
-						{{ series.yearEnd }}
+						{{ serie.yearEnd }}
 					{% endif %}
 				</em>
 
 				<!-- Genres -->
 				<section class="mt-2">
 					Genres: 
-					{% for category in series.getGenre() %}
+					{% for category in serie.getGenre() %}
 						<a href="{{path('series_index', {'category':category.name})}}">
 							<span>{{ category.name }}</span>
 						</a>
@@ -38,17 +38,17 @@
 				</section>
 
 				<!-- Follow or unfollow button -->
-				{% if user != NULL and series in user.getSeries() %}
-					<a class="btn btn-primary" href="{{ path('unfollow', {'serieID': series.id}) }}">Unfollow</a>
+				{% if app.user != NULL and serie in app.user.series %}
+					<a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
 				{% else %}
-					<a class="btn btn-primary" href="{{ path('follow', {'serieID': series.id}) }}">Follow</a>
+					<a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
 				{% endif %}
 
 				<!-- Rate button -->
-				{% if user != NULL and series.hasBeenRatedByUser(user) %}
-					<a class="btn btn-warning w-100 mt-2" href="{{ path('series_show', {'id': series.id}) }}">See my rating</a>
+				{% if app.user != NULL and serie.hasBeenRatedByUser(app.user) %}
+					<a class="btn btn-warning w-100 mt-2" href="{{ path('see_rate', {'id': serie.id}) }}">See my rating</a>
 				{% else %}
-					<a class="btn btn-warning w-100 mt-2" href="{{ path('series_rate', {'serieID': series.id}) }}">Rate</a>
+					<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
 				{% endif %}
 			
 			</div>
@@ -59,34 +59,34 @@
 				<!-- First section: Series informations -->
 				<div class="d-flex flex-column justify-content-center mb">
 
-					<h4> {{ series.getExternalRatingValue() }} </h4>
+					<h4> {{ serie.getExternalRatingValue() }} </h4>
 
 					<!-- Awards -->
-					{% if "N/A" not in series.awards %}
+					{% if "N/A" not in serie.awards %}
 						<h5 class="text-warning">
-							{{ series.awards }}
+							{{ serie.awards }}
 						</h5>
 					{% endif %}
 					
 					<!-- Number of followers -->
 					<h5>
 						Followed by
-						{{ series.user|length }}
+						{{ serie.user|length }}
 						user(s).
 					</h5>
 
 					<!-- Trailer & Plot -->
 					<figure class="w-100 h-300">
-						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ series.youtubeTrailer }}" title="trailer"></iframe>
+						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" title="trailer"></iframe>
 					</figure>
 					<p>
-						{{ series.plot }}
+						{{ serie.plot }}
 					</p>
 
 					<!-- Actors list -->
 					<h5>Actors</h5>
 					<ul class="list-group list-group-horizontal-sm">
-						{% for actor in series.actor %}
+						{% for actor in serie.actor %}
 							<li class="list-group-item list-group-item-danger">{{ actor.getName() }}</li>
 						{% endfor %}
 					</ul>
@@ -96,7 +96,7 @@
 				<!-- Second section: Series seasons & episodes -->
 				<div style="margin-top:5em;">
 					<h3>Seasons and episodes</h3>
-					{% for season in series.getSeasonsOrdered() %}
+					{% for season in serie.getSeasonsOrdered() %}
 
 						<!-- Season n -->
 						<div style="margin-bottom: 4em;">
@@ -111,12 +111,12 @@
 										Release date: {{ episode.date.format('Y-m-d') }} </br>
 
 										<!-- Mark as seen or not seen button -->
-										{% if user != NULL and episode in user.getEpisode() %}
-											<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'episodeID': episode.id}) }}">
+										{% if app.user != NULL and episode in app.user.getEpisode() %}
+											<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'id': episode.id}) }}">
 												Mark as not seen
 											</a>
 										{% else %}
-											<a class="btn btn-primary" href="{{ path('mark_as_seen', {'episodeID': episode.id}) }}">
+											<a class="btn btn-primary" href="{{ path('mark_as_seen', {'id': episode.id}) }}">
 												Mark as seen
 											</a>
 										{% endif %}

@@ -15,15 +15,8 @@ class AccountController extends AbstractController
     public function account(AuthenticationUtils $authenticationUtils): Response
     {
         // Verify that a user is loged in
-        if (!$this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED'))
-        {
-            // get the login error if there is one
-            $error = $authenticationUtils->getLastAuthenticationError();
-            
-            // last username entered by the user
-            $lastUsername = $authenticationUtils->getLastUsername();
-
-            return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('user_login');
         }
 
         return $this->render('account/account.html.twig', ['user' => $this->getUser()]);

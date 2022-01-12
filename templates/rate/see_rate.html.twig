@@ -1,0 +1,19 @@
+{% extends 'rate/rate.html.twig' %}
+
+{% block title %}Modify rating{% endblock %}
+
+{% block body %}
+
+    <h2>My rating on {{ serie.title }}</h2>
+
+    <!-- Rating informations -->
+    <p>Mark: {{ rating.value }}</p>
+    <p>Comment: {{ rating.comment }}</p>
+
+   <!-- Modify & Go back button -->
+    <div>
+        <a class="btn btn-primary" href="{{ path('modify_series_rate', {'id': serie.id }) }}">Modify</a>
+        <a class="btn btn-danger" href="{{ path('series_show', {'id': serie.id }) }}">Go back</a>
+    </div>
+
+{% endblock %}

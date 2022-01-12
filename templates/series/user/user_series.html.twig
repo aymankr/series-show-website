@@ -15,18 +15,17 @@
     
                 <div class="col-md-9">
                     <div class="d-flex justify-content-start mb">
-                        {{ knp_pagination_sortable(series, 'By alphabet', 's.title' )}}
-                        {{ knp_pagination_sortable(series, 'By date', 's.yearStart' )}}
-                        {{ knp_pagination_sortable(series, 'By rating', 'e.value' )}}
+                        {{ knp_pagination_sortable(serie, 'By alphabet', 's.title' )}}
+                        {{ knp_pagination_sortable(serie, 'By date', 's.yearStart' )}}
+                        {{ knp_pagination_sortable(serie, 'By rating', 'e.value' )}}
                     </div>
                     <div class="grid">
-                        {% for serie in series %}
-                            {% include 'series/_preview.html.twig' with {serie: serie, user: user} %}
-                            <!-- <a class="btn btn-primary">Unfollow</a> -->
+                        {% for serie in serie %}
+                            {% include 'series/_preview.html.twig' with {serie: serie} %}
                         {% endfor %}
                     </div>
                     <div style="margin-top:5em;">
-                        {{ knp_pagination_render(series) }}
+                        {{ knp_pagination_render(serie) }}
                     </div>
                 </div>
             </div>
