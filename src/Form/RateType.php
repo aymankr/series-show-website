@@ -5,12 +5,11 @@ namespace App\Form;
 use App\Entity\Rating;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RateType extends AbstractType
 {
@@ -18,18 +17,24 @@ class RateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('value' , NumberType::class, [
-            'label' => false,
-            'attr' => [
-                'placeholder' => 'Rate from 1 to 10.'
-            ],
-            'constraints' => [
-                new NotBlank([
-                    'message' => 'Please enter a rating value'
-                ])
+
+        // Rating number
+        ->add('value' , ChoiceType::class, [
+            'choices'  => [
+                '1' => 1,
+                '2' => 2,
+                '3' => 3,
+                '4' => 4,
+                '5' => 5,
+                '6' => 6,
+                '7' => 7,
+                '8' => 8,
+                '9' => 9,
+                '10' => 10,
             ]
         ])
 
+        // Comment
         ->add('comment', TextType::class, [
                 'label' => 'Leave a comment',
                 'required' => false,
@@ -39,6 +44,7 @@ class RateType extends AbstractType
             ]
         )
 
+        // Save button
         ->add('save', SubmitType::class, [
             'label' => 'Save rating',
         ]);

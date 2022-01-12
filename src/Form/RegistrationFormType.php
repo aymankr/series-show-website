@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,6 +25,7 @@ class RegistrationFormType extends AbstractType
 
             // New user name
             ->add('name' ,TextType::class, [
+                'label' => 'Username',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a name'
@@ -33,6 +35,7 @@ class RegistrationFormType extends AbstractType
 
             // New user email
             ->add('email', EmailType::class, [
+                'label' => 'Email address',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter an email address'
@@ -55,6 +58,8 @@ class RegistrationFormType extends AbstractType
 
             // Password and password confirmation
             ->add('plainPassword', RepeatedType::class, [
+                'first_options'  => ['label' => 'Password'],
+                'second_options' => ['label' => 'Repeat Password'],
                 'type' => PasswordType::class,
                 'invalid_message' => 'The passwords do not match.',
                 'options' => ['attr' => ['class' => 'password-field']],
@@ -81,7 +86,11 @@ class RegistrationFormType extends AbstractType
                 'quality' => 40,
                 'invalid_message' => 'It does not match with the captcha'
             ])
-        ;
+
+            // Submit button
+            ->add('submit', SubmitType::class, [
+                'label' => 'Register'
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
