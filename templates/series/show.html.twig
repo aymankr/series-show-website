@@ -92,45 +92,44 @@
 					</ul>
 
 				</div>
-
-				<!-- Second section: Series seasons & episodes -->
-				<div style="margin-top:5em;">
-					<h3>Seasons and episodes</h3>
-					{% for season in series.getSeasonsOrdered() %}
-
-						<!-- Season n -->
-						<div style="margin-bottom: 4em;">
-							<h5>Season {{ season.number }}</h5>
-							<ul class="list-group list-group-vertical-sm">
-
-								{% for episode in season.getEpisodesOrdered() %}
-									<li class="list-group-item list-group-item-warning">
-
-										<!-- Episode informations -->
-										Episode n°{{ episode.getNumber() }}: {{ episode.getTitle() }} </br>
-										Release date: {{ episode.date.format('Y-m-d') }} </br>
-
-										<!-- Mark as seen or not seen button -->
-										{% if user != NULL and episode in user.getEpisode() %}
-											<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'episodeID': episode.id}) }}">
-												Mark as not seen
-											</a>
-										{% else %}
-											<a class="btn btn-primary" href="{{ path('mark_as_seen', {'episodeID': episode.id}) }}">
-												Mark as seen
-											</a>
-										{% endif %}
-
-									</li>
-								{% endfor %}
-							</ul>
-						</div>
-
-					{% endfor %}
-				</div>
-
 			</div>
 		</div>
+		<!-- Second section: Series seasons & episodes -->
+		<div class="container m-3">
+			<h3>Seasons and episodes</h3>
+			{% for season in series.getSeasonsOrdered() %}
+				<details>
+				<!-- Season n -->
+				<summary>Season {{ season.number }} </summary>
+				<article>
+					<ul class="list-style-type-none p-0">
+						{% for episode in season.getEpisodesOrdered() %}
+							<li class="list-group-item list-group-item-warning m-1 xsmall">
+
+								<!-- Episode informations -->
+								Episode n°{{ episode.getNumber() }}: {{ episode.getTitle() }} | 
+								Release date: {{ episode.date.format('Y-m-d') }} </br>
+
+								<!-- Mark as seen or not seen button -->
+								{% if user != NULL and episode in user.getEpisode() %}
+									<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'episodeID': episode.id}) }}">
+										Mark as not seen
+									</a>
+								{% else %}
+									<a class="btn btn-primary" href="{{ path('mark_as_seen', {'episodeID': episode.id}) }}">
+										Mark as seen
+									</a>
+								{% endif %}
+
+							</li>
+						{% endfor %}
+					</ul>
+				</article>
+				
+				</details>
+			{% endfor %}
+		</div>
+
 		<a href="{{ path('series_index') }}">back to list</a>
 	</div>
 {% endblock %}
