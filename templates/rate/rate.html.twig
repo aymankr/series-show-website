@@ -2,17 +2,18 @@
 
 {% block body %}
 	<div class="container">
-		<a class="btn btn-warning" href="{{ path('series_show', {'id': serie.id }) }}">Back</a>
-		<h4>Rating for "{{ serie.title }}"</h4>
-
-		<a class="btn btn-primary" href="{{ path('series_rate', {'serieID': serie.id }) }}">Save rating</a>
-		<a class="btn btn-danger" href="{{ path('series_show', {'id': serie.id }) }}">Delete rating</a>
+		<h2>How did you find {{ serie.title }} ?</h2>
 
 		{{ form_start(form) }}
 
-		{{ form_row(form.comment) }}
 		{{ form_row(form.value) }}
+		{{ form_row(form.comment) }}
 
+		<!-- Save & cancel button -->
+		<div>
+			{{ form_row(form.save) }}
+			<a class="btn btn-danger" href="{{ path('series_show', {'id': serie.id }) }}">Cancel</a>
+		</div>
 
 		{{ form_end(form) }}
 	</div>

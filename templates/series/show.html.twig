@@ -10,7 +10,7 @@
 
 				<!-- Title and poster -->
 				<h2>{{ series.title }}</h2>
-				<img src="{{ path('series_poster', {'id':series.id})}}" class="show-img-left"/>
+				<img src="{{ path('series_poster', {'id':series.id})}}" class="show-img-left" alt="poster"/>
 
 				<!-- Year start and end -->
 				<em>
@@ -45,13 +45,10 @@
 				{% endif %}
 
 				<!-- Rate button -->
-				{% if series.user %}
-					<!-- ??? -->
+				{% if series.getRatingByUser(user) == null %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('series_rate', {'serieID': series.id}) }}">Rate</a>
 				{% else %}
-					<em>
-						Rated.
-					</em>
+					<a class="btn btn-warning w-100 mt-2" href="{{ path('series_show', {'id': series.id}) }}">See my rating</a>
 				{% endif %}
 			
 			</div>
@@ -78,9 +75,9 @@
 						user(s).
 					</h5>
 
-					<!-- Trailer -->
+					<!-- Trailer & Plot -->
 					<figure class="w-100 h-300">
-						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ series.youtubeTrailer }}"></iframe>
+						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ series.youtubeTrailer }}" title="trailer"></iframe>
 					</figure>
 					<p>
 						{{ series.plot }}

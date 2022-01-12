@@ -123,6 +123,13 @@ class Series
     private $seasons;
 
     /**
+     * @var \Rating
+     * 
+     * @ORM\OneToMany(targetEntity="Rating", mappedBy="series")
+     */
+    private $ratings;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -131,7 +138,8 @@ class Series
         $this->country = new \Doctrine\Common\Collections\ArrayCollection();
         $this->genre = new \Doctrine\Common\Collections\ArrayCollection();
         $this->user = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->seasons = new ArrayCollection();
+        $this->seasons = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->ratings = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId(): ?int
@@ -203,8 +211,8 @@ class Series
     {
         // return only the id of the link
         $results = NULL;
-        preg_match('/(http(s|):|)\/\/(www\.|)yout(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $this->youtubeTrailer, $results);    return $results[6];
-        // return $this->youtubeTrailer;
+        preg_match('/(http(s|):|)\/\/(www\.|)yout(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $this->youtubeTrailer, $results);    
+        return $results[6];
     }
 
     public function setYoutubeTrailer(?string $youtubeTrailer): self
@@ -397,4 +405,25 @@ class Series
         return $this;
     }
 
+    /**
+     * @return Collection|Rating[]
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    /**
+     * @param User the user that possibly rated this serie
+     * @return Rating|null
+     */
+    public function getRatingByUser(User $user): Rating|null
+    {
+        foreach ($this->ratings as $rating) {
+            if ($rating->getUser() === $user) {
+                return $rating;
+            }
+        }
+        return null;
+    }
 }

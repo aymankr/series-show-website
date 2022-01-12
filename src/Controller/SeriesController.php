@@ -49,71 +49,6 @@ class SeriesController extends AbstractController
     }
 
     /**
-     * @Route("/my-series", name="user_series", methods={"GET"})
-     */
-    public function user_series(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response 
-    {
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
-
-        $search = new Search();
-        $search->page = $request->get('page', 1);
-        $search->followed = true;
-        if (isset($_GET['category'])) {
-            $repo = $entityManager->getRepository(Genre::class);
-            $c = $repo->createQueryBuilder('g')
-                ->where('g.name = :name')
-                ->setParameter('name', $_GET['category'])->getQuery()->getResult();
-
-            array_push($search->categories, $c[0]);
-        }
-
-        $form = $this->createForm(SearchType::class, $search);
-        $form->handleRequest($request);
-
-        $series = $repository->getSeries($search);
-
-        return $this->render('series/user_series.html.twig', [
-            'series' => $series,
-            'form' => $form->createView(),
-            'user' => $this->getUser()
-        ]);
-    }
-
-    /**
-     * @Route("/follow_serie/{serieID}", name="follow")
-     */
-    public function follow(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
-
-        $this->getUser()->addSeries($repository->findOneById($serieID));
-        $entityManager->flush();    // Update the changes made in the databse
-        return $this->redirect($request->headers->get('referer'));
-    }
-
-    /**
-     * @Route("/unfollow_serie/{serieID}", name="unfollow")
-     */
-    public function unfollow(int $serieID, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
-
-        $this->getUser()->removeSeries($repository->findOneById($serieID));
-        $entityManager->flush();    // Update the changes made in the databse
-
-        if (strpos($request->headers->get('referer'), 'my-series') !== false) {
-            return $this->redirectToRoute('user_series');
-        }
-        return $this->redirect($request->headers->get('referer'));
-    }
-
-    /**
      * @Route("/new", name="series_new", methods={"GET", "POST"})
      */
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -138,7 +73,7 @@ class SeriesController extends AbstractController
     /**
      * @Route("/show/{id}", name="series_show", methods={"GET"})
      */
-    public function show(Series $series, $id,EntityManagerInterface $entityManager): Response
+    public function show(Series $series, $id, EntityManagerInterface $entityManager): Response
     {
         $external_rating = $entityManager->createQuery("SELECT r FROM App:ExternalRating r
                         WHERE r.id = :id")->setParameter('id', $id)->getResult()[0];
