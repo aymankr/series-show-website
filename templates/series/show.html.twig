@@ -45,10 +45,10 @@
 				{% endif %}
 
 				<!-- Rate button -->
-				{% if series.getRatingByUser(user) == null %}
-					<a class="btn btn-warning w-100 mt-2" href="{{ path('series_rate', {'serieID': series.id}) }}">Rate</a>
-				{% else %}
+				{% if user != NULL and series.hasBeenRatedByUser(user) %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('series_show', {'id': series.id}) }}">See my rating</a>
+				{% else %}
+					<a class="btn btn-warning w-100 mt-2" href="{{ path('series_rate', {'serieID': series.id}) }}">Rate</a>
 				{% endif %}
 			
 			</div>

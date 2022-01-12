@@ -218,7 +218,7 @@ class Series
     {
         // return only the id of the link
         $results = NULL;
-        preg_match('/(http(s|):|)\/\/(www\.|)yout(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $this->youtubeTrailer, $results);    
+        preg_match('/(http(s|):|)\/\/(www\.|)yout(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $this->youtubeTrailer, $results);
         return $results[6];
     }
 
@@ -424,7 +424,7 @@ class Series
      * @param User the user that possibly rated this serie
      * @return Rating|null
      */
-    public function getRatingByUser(User $user): Rating|null
+    public function getRatingByUser(User $user): Rating
     {
         foreach ($this->ratings as $rating) {
             if ($rating->getUser() === $user) {
@@ -435,16 +435,32 @@ class Series
     }
 
     /**
+     * @param User the user that possibly rated this serie
+     * @return bool
+     */
+    public function hasBeenRatedByUser(User $user): bool
+    {
+        foreach ($this->ratings as $rating) {
+            if ($rating->getUser() === $user) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @return ExternalRating
      */
-    public function getExternalRating() {
+    public function getExternalRating()
+    {
         return $this->externalRating;
     }
 
     /**
      * @return ExternalRating
      */
-    public function getExternalRatingValue() {
+    public function getExternalRatingValue()
+    {
         return $this->externalRating->getValue();
     }
 }
