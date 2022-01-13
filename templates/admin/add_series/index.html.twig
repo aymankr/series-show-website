@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Add new serie{% endblock %}
+
+{% block body %}
+
+    {% if not serie_found %}
+        <h4>The given ID does not correspond to any IMDb serie.</h4>
+    {% endif %}
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.imdb_id) }}
+    {{ form_row(form.submit) }}
+    
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block title %}New serie presentation{% endblock %}
+
+{% block body %}        
+
+    <h1>Series information for {{serie.imdbID}}</h1>
+    <p>Title: {{serie.Title}}</p>
+    <img src="{{ serie.Poster }}" class="show-img-left" alt="poster"/>
+    <p>Date: {{serie.Year}}</p>
+    <p>Plot: {{serie.Plot}}</p>
+    <p>Awards: {{serie.Awards}}</p>
+
+{% endblock %}
