@@ -6,6 +6,7 @@ use DateTime;
 use App\Entity\Rating;
 use App\Entity\Series;
 use App\Repository\SeriesRepository;
+use App\Repository\RatingRepository;
 use App\Form\RateType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -64,6 +65,19 @@ class RateController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
+    /**
+     * @Route("/delete/{id}", name="delete_series_rate", methods={"GET"})
+     */
+    public function delete_rate(RatingRepository $ratingRepository, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $rate = $ratingRepository->find($id);
+        $entityManager->remove($rate); 
+        $entityManager->flush();       
+
+        return $this->redirectToRoute('moderation');
+    }
+
 
     /**
      * @Route("/see/{id}", name="see_rate")
