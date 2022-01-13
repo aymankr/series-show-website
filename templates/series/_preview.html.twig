@@ -18,7 +18,7 @@
             {% endif %}
         {% endif %}
         <div>
-            {% if app.user and serie in app.user.series %}
+            {% if app.user != NULL and serie in app.user.series %}
                 <a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
             {% else %}
                 <a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>

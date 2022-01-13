@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Moderate comments
+{% endblock %}
+
+{% block body %}
+
+	<div class="container">
+		{% include 'moderation/_filter_comments.html.twig' with {form : form} only %}
+
+		<div class="d-flex justify-content-start mb">
+			{{ knp_pagination_sortable(ratings, 'By date', 'r.date' )}}
+		</div>
+		<ul class="list-group">
+			{% for rating in ratings %}
+				<li class="list-group-item list-group-item-success">
+					{% include 'moderation/_preview_comments.html.twig' with {ratings: rating} only %}
+                </li>
+			{% endfor %}
+		</ul>
+
+		<div class"mt-4">
+			{{ knp_pagination_render(ratings) }}
+		</div>
+	</div>
+{% endblock %}

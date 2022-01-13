@@ -1,0 +1,14 @@
+<div class="preview">
+	<p>
+		<strong>
+			{{ ratings.user.name }}
+		</strong>
+		,
+		<em>the
+			{{ ratings.date.format('Y-m-d') }}</em>, has commented "{{ ratings.comment }}", for the serie "{{ ratings.series.title }}".
+		<a class="btn btn-primary" href="{{ path('delete_series_rate', {'id': ratings.id}) }}">
+			Delete
+		</a>
+
+	</p>
+</div>
