@@ -15,7 +15,11 @@
 
         <h4 class="d-inline">Followed series</h4>
 
-        {{ form_row(form.followed, { 'attr': {'class': 'd-inline' }}) }}
+        {% if app.user and not app.user.admin %}
+            {{ form_row(form.followed) }}
+        {% else %}
+            {{ form_row(form.followed, { 'attr': {'disabled': 'true' }}) }}
+        {% endif %}
     
     {% endblock %}
 

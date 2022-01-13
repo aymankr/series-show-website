@@ -3,6 +3,6 @@
 {% block followed %}
 
     {# Hide the filter because we are already on the user series page #}
-    {{ form_row(form.followed, { 'attr': {'class': 'd-none' }}) }}
+    {{ form_row(form.followed, { 'attr': {'disabled': 'true' }}) }}
 
 {% endblock %}

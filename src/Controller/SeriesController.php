@@ -38,7 +38,14 @@ class SeriesController extends AbstractController
         $form = $this->createForm(SearchType::class, $search);
         $form->handleRequest($request);
 
-        $serie = $repository->getSeries($search);
+        // Get the series to display
+        if (!$this->getUser()) {
+            $serie = $repository->getSeriesUserNotConnected($search);
+        } 
+        else {
+            $serie = $repository->getSeriesUserConnected($search, $this->getUser());
+        }
+
         return $this->render('series/index.html.twig', [
             'serie' => $serie,
             'form' => $form->createView()

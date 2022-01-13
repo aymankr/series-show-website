@@ -7,7 +7,6 @@ use App\Entity\Genre;
 use App\Entity\Series;
 use App\Form\SearchType;
 use App\Repository\SeriesRepository;
-use App\Repository\EpisodeRepository;
 use App\Search\Search;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,8 +24,12 @@ class UserSeriesController extends AbstractController
      */
     public function user_series(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response 
     {
-        if ($this->getUser() == null) {
+        // Verify user connection
+        if (!$this->getUser()) {
             return $this->redirectToRoute('user_login');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
         }
 
         $search = new Search();
@@ -44,7 +47,7 @@ class UserSeriesController extends AbstractController
         $form = $this->createForm(SearchType::class, $search);
         $form->handleRequest($request);
 
-        $serie = $repository->getSeries($search);
+        $serie = $repository->getSeriesUserConnected($search, $this->getUser());
 
         return $this->render('series/user/user_series.html.twig', [
             'serie' => $serie,
@@ -57,8 +60,12 @@ class UserSeriesController extends AbstractController
      */
     public function follow(Series $serie, Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($this->getUser() == null) {
+        // Verify user connection
+        if (!$this->getUser()) {
             return $this->redirectToRoute('user_login');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
         }
 
         $this->getUser()->addSeries($serie);
@@ -72,8 +79,12 @@ class UserSeriesController extends AbstractController
      */
     public function unfollow(Series $serie, Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($this->getUser() == null) {
+        // Verify user connection
+        if (!$this->getUser()) {
             return $this->redirectToRoute('user_login');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
         }
 
         $this->getUser()->removeSeries($serie);
@@ -91,10 +102,13 @@ class UserSeriesController extends AbstractController
      */
     public function mark_as_seen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($this->getUser() == null) {
+        // Verify user connection
+        if (!$this->getUser()) {
             return $this->redirectToRoute('user_login');
         }
-
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
+        }
 
         $this->getUser()->addEpisode($episode);
         $entityManager->persist($this->getUser()); // save changes locally
@@ -107,8 +121,12 @@ class UserSeriesController extends AbstractController
      */
     public function mark_as_not_seen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($this->getUser() == null) {
+        // Verify user connection
+        if (!$this->getUser()) {
             return $this->redirectToRoute('user_login');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
         }
 
         $this->getUser()->removeEpisode($episode);
@@ -116,4 +134,5 @@ class UserSeriesController extends AbstractController
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }
+
 }

@@ -38,14 +38,14 @@
 				</section>
 
 				<!-- Follow or unfollow button -->
-				{% if app.user != NULL and serie in app.user.series %}
+				{% if app.user and serie in app.user.series %}
 					<a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
 				{% else %}
 					<a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
 				{% endif %}
 
 				<!-- Rate button -->
-				{% if app.user != NULL and serie.hasBeenRatedByUser(app.user) %}
+				{% if app.user and serie.hasBeenRatedByUser(app.user) %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('see_rate', {'id': serie.id}) }}">See my rating</a>
 				{% else %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
@@ -112,7 +112,7 @@
 								Release date: {{ episode.date.format('Y-m-d') }} </br>
 
 								<!-- Mark as seen or not seen button -->
-								{% if app.user != NULL and episode in app.user.getEpisode() %}
+								{% if app.user and episode in app.user.getEpisode() %}
 									<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'id': episode.id}) }}">
 										Mark as not seen
 									</a>

@@ -24,9 +24,8 @@ class RateController extends AbstractController
      */
     public function add_rate(Series $serie, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
     {
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
+        $this->verify_user();
+
         $rate = new Rating();
         $form = $this->createForm(RateType::class, $rate);
         $form->handleRequest($request);
@@ -48,10 +47,7 @@ class RateController extends AbstractController
      */
     public function modify_rate(Series $serie, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
     {
-        // Verify that a user is loged in
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
+        $this->verify_user();
 
         $rating = $serie->getRatingByUser($this->getUser());
         $form = $this->createForm(RateType::class, $rating);
@@ -74,10 +70,7 @@ class RateController extends AbstractController
      */
     public function see_rate(Series $serie): Response
     {
-        // Verify that a user is loged in
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
+        $this->verify_user();
         
         return $this->render('rate/see_rate.html.twig', [
             'serie' => $serie,
@@ -118,5 +111,20 @@ class RateController extends AbstractController
         $entityManager->flush();        // Update the changes made in the databse
 
         return $this->redirectToRoute('series_show', ['id' => $rate->getSeries()->getId()]);
+    }
+
+    /**
+     * Redirect the user to the login page if he's not connected,
+     * or to the home page if he's an admin.
+     */
+    private function verify_user()
+    {
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('user_login');
+        }
+
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
+        }
     }
 }

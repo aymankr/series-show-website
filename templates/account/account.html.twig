@@ -9,15 +9,22 @@
     <h3>My informations</h3>
 
     <div>
-        <p>Username: {{ user.name }}</p>
-        <p>Email: {{ user.email }}</p>
-        <p>Register date: {{ user.registerDate.format('Y-m-d') }}</p>
+        <p>Username: {{ app.user.name }}</p>
+        <p>Email: {{ app.user.email }}</p>
+        
+        <p>Register date: 
+            {% if app.user.registerDate == NULL %}
+                Unknown
+            {% else %}
+            {{ app.user.registerDate.format('Y-m-d') }}
+            {% endif %}
+        </p>
 
         <p>Contry: 
-            {% if user.country == NULL %}
+            {% if app.user.country == NULL %}
                 Not specified
             {% else %}
-                {{ user.country }}
+                {{ app.user.country }}
             {% endif %}
         </p>
 

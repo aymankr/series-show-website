@@ -45,7 +45,7 @@ class SearchType extends AbstractType
             ])
 
             ->add('followed', CheckboxType::class, [
-                'label' => false,
+                'label' => 'Series I follow',
                 'required' => false,
             ])
 

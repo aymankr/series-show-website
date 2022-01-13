@@ -19,6 +19,6 @@ class AccountController extends AbstractController
             return $this->redirectToRoute('user_login');
         }
 
-        return $this->render('account/account.html.twig', ['user' => $this->getUser()]);
+        return $this->render('account/account.html.twig');
     }
 }

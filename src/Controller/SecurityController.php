@@ -28,6 +28,6 @@ class SecurityController extends AbstractController
      */
     public function logout(): void
     {
-        // Intercepted by the firewall
+        $this->session_destroy;
     }
 }

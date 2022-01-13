@@ -3,8 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>
-			{% block title %}Welcome!
-			{% endblock %}
+			{% block title %}Welcome!{% endblock %}
 		</title>
 		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
 
@@ -74,7 +73,17 @@
 				<a href="{{ path('home') }}" class="navbar-brand mb-0 h1">Home</a>
 			</li>
 			<li>
-				<a href="{{ path('user_series') }}" class="navbar-brand mb-0 h1">My series</a>
+				{% if app.user and app.user.admin %}
+					<button class="btn btn-danger dropdown-toggle navbar-brand mb-0" type="button" data-toggle="dropdown">
+						Moderation
+					</button>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="{{ path('comments_moderation') }}">Moderate comments</a>
+						<a class="dropdown-item" href="{{ path('add_series') }}">Add new series</a>
+					</div>
+				{% else %}
+					<a href="{{ path('user_series') }}" class="navbar-brand mb-0 h1">My series</a>
+				{% endif %}
 			</li>
 			<li>
 				<a href="{{ path('series_index') }}" class="navbar-brand mb-0 h1">Explore</a>
