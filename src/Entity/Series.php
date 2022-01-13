@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Criteria;
+use Symfony\Component\Validator\Constraints\Length;
+
+use function PHPUnit\Framework\countOf;
 
 /**
  * Series
@@ -446,6 +449,18 @@ class Series
             }
         }
         return false;
+    }
+
+    public function getAverageRating() {
+        $sum = $length = 0;
+        foreach ($this->ratings as $rating) {
+            $sum += $rating->getValue();
+            $length++;
+        }
+        if ($length > 0) {
+            return ($sum)/$length;
+        }
+        return -1;
     }
 
     /**
