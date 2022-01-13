@@ -20,8 +20,8 @@
                         {{ knp_pagination_sortable(serie, 'By rating', 'e.value' )}}
                     </div>
                     <div class="grid">
-                        {% for serie in serie %}
-                            {% include 'series/_preview.html.twig' with {serie: serie} %}
+                        {% for serie_n in serie %}
+                            {% include 'series/_preview.html.twig' with {serie: serie_n} %}
                         {% endfor %}
                     </div>
                     <div style="margin-top:5em;">

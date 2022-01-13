@@ -62,6 +62,7 @@ class UserSeriesController extends AbstractController
         }
 
         $this->getUser()->addSeries($serie);
+        $entityManager->persist($this->getUser()); // save changes locally
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }
@@ -76,6 +77,7 @@ class UserSeriesController extends AbstractController
         }
 
         $this->getUser()->removeSeries($serie);
+        $entityManager->persist($this->getUser()); // save changes locally
         $entityManager->flush();    // Update the changes made in the databse
 
         if (strpos($request->headers->get('referer'), 'my-series') !== false) {
@@ -95,6 +97,7 @@ class UserSeriesController extends AbstractController
 
 
         $this->getUser()->addEpisode($episode);
+        $entityManager->persist($this->getUser()); // save changes locally
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }
@@ -109,6 +112,7 @@ class UserSeriesController extends AbstractController
         }
 
         $this->getUser()->removeEpisode($episode);
+        $entityManager->persist($this->getUser()); // save changes locally
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }

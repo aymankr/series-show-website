@@ -84,7 +84,8 @@ class RegistrationFormType extends AbstractType
             ->add('captcha', CaptchaType::class, [
                 'length' => 7,
                 'quality' => 40,
-                'invalid_message' => 'It does not match with the captcha'
+                'invalid_message' => 'It does not match with the captcha',
+                'disabled' => true
             ])
 
             // Submit button
