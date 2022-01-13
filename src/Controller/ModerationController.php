@@ -9,16 +9,20 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Search\SearchComments;
 use App\Repository\RatingRepository;
 use App\Form\ModerationFormType;
+use App\Repository\SeriesRepository;
 
 class ModerationController extends AbstractController
 {
     /**
      * @Route("/moderation", name="moderation")
      */
-    public function index(Request $request, RatingRepository $ratingRepository): Response
+    public function index(Request $request, RatingRepository $ratingRepository, SeriesRepository $seriesRepository): Response
     {
         $search = new SearchComments();
         $search->page = $request->get('page', 1);
+        if (isset($_GET['id'])) {
+            $search->searchSerie = $seriesRepository->find($_GET['id'])->getTitle();
+        }
 
         $form = $this->createForm(ModerationFormType::class, $search);
         $form->handleRequest($request);
