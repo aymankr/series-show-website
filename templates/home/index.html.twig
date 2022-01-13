@@ -10,12 +10,19 @@
         }
 
         .container a {
-            width: 13em;
             margin :0.5em;
             background-color:#AF1F00;
             box-shadow: 0 14px 28px rgba(255,255,255,0.25), 0 10px 10px rgba(255,255,255,0.22);
             border-radius: 6%;
         }
+
+        .grid a {
+            width: 13em;
+            margin :0.5em;
+            background-color:#AF1F00;
+            box-shadow: 0 14px 28px rgba(255,255,255,0.25), 0 10px 10px rgba(255,255,255,0.22);
+            border-radius: 6%;
+        }        
 
         .container a:hover {
             letter-spacing: 2.7px;
@@ -29,7 +36,17 @@
 
         <div class="container">
         
-            <h1>Series by categories</h1>
+            <h2>Top rated series</h2>
+
+            <div class="d-flex justify-content-center">
+                {% for serie in trendingSeries %}
+                       <a href="{{ path('series_show', {'id': serie.id})}}"> 
+                            <img src="{{ path('series_poster', {'id': serie.id})}}" class="preview-img-top" alt="poster"/>
+                        </a>
+                {% endfor %}
+            </div>
+
+            <h2>Series by categories</h2>
             <div class="grid">
                 {% for category in categories %}
                     <a href="{{path('series_index', {'category':category.name})}}"> <h3>{{ category.name }} </h3></a>
@@ -37,6 +54,7 @@
             </div>
 
              <script>
+                //attribute a random color for each blocks
                 const randomColorBlock = document.querySelectorAll('.container a');
                 randomColorBlock.forEach(e=>{
                     e.style.backgroundColor = '#' + Math.random().toString(16).slice(-6);;

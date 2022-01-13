@@ -28,35 +28,47 @@ class SeriesRepository extends ServiceEntityRepository
         $this->paginator = $paginator;
     }
 
-    public function getSeries(Search $search): PaginationInterface {
+    public function getSeries(Search $search): PaginationInterface
+    {
         $query = $this->createQueryBuilder('s')
-                ->select('s', 'g', 'r')
-                ->join('s.genre', 'g')->leftJoin('s.ratings', 'r');
+            ->select('s', 'g', 'r')
+            ->join('s.genre', 'g')->leftJoin('s.ratings', 'r');
 
         if (!empty($search->s)) {
             $query = $query->andWhere('s.title LIKE :search')
-            ->setParameter('search', "%{$search->s}%");
+                ->setParameter('search', "%{$search->s}%");
         }
 
         if (!empty($search->countries)) {
             $query = $query->join('s.country', 'co')
-            ->andWhere('co.id IN (:countries)')
-            ->setParameter('countries', $search->countries);
+                ->andWhere('co.id IN (:countries)')
+                ->setParameter('countries', $search->countries);
         }
 
         if (!empty($search->categories)) {
             $query = $query->join('s.genre', 'ca')
-            ->andWhere('ca.id IN (:categories)')
-            ->setParameter('categories', $search->categories);
-        }    
-        
+                ->andWhere('ca.id IN (:categories)')
+                ->setParameter('categories', $search->categories);
+        }
+
         if (!empty($search->followed)) {
             $query = $query->join('s.user', 'u')
-            ->andWhere('u.id IS NOT NULL');
+                ->andWhere('u.id IS NOT NULL');
         }
 
         $query = $query->getQuery();
 
-        return $this->paginator->paginate($query, $search->page, 6, array('wrap-queries'=>true));
+        return $this->paginator->paginate($query, $search->page, 6, array('wrap-queries' => true));
+    }
+
+    public function getTrendingSeries()
+    {
+        $query = $this->createQueryBuilder('s')
+            ->select('s')
+            ->leftJoin('s.ratings', 'r')
+            ->orderBy('r.value', 'DESC')
+            ->setMaxResults(3);
+
+        return $query->getQuery()->getResult();
     }
 }
