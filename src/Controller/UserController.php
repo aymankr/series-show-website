@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Episode;
 use App\Entity\Genre;
 use App\Entity\Series;
-use App\Form\SearchType;
+use App\Form\SearchSerieFormType;
 use App\Repository\SeriesRepository;
 use App\Search\Search;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,10 +15,26 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/series/user")
+ * @Route("/user")
  */
-class UserSeriesController extends AbstractController
+class UserController extends AbstractController
 {
+    /**
+     * @Route("/account", name="user_account")
+     */
+    public function account(): Response
+    {
+        // Verify that a user is loged in and not an admin
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('user_login');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
+        }
+
+        return $this->render('user/account.html.twig');
+    }
+
     /**
      * @Route("/my-series", name="user_series", methods={"GET"})
      */
@@ -44,19 +60,19 @@ class UserSeriesController extends AbstractController
             array_push($search->categories, $c[0]);
         }
 
-        $form = $this->createForm(SearchType::class, $search);
+        $form = $this->createForm(SearchSerieFormType::class, $search);
         $form->handleRequest($request);
 
         $serie = $repository->getSeriesUserConnected($search, $this->getUser());
 
-        return $this->render('series/user/user_series.html.twig', [
+        return $this->render('user/user_series.html.twig', [
             'serie' => $serie,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/follow_serie/{id}", name="follow")
+     * @Route("/follow-serie/{id}", name="follow")
      */
     public function follow(Series $serie, Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -75,7 +91,7 @@ class UserSeriesController extends AbstractController
     }
 
     /**
-     * @Route("/unfollow_serie/{id}", name="unfollow")
+     * @Route("/unfollow-serie/{id}", name="unfollow")
      */
     public function unfollow(Series $serie, Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -98,7 +114,7 @@ class UserSeriesController extends AbstractController
     }
 
     /**
-     * @Route("/mark_as_seen/episode{id}", name="mark_as_seen")
+     * @Route("/mark-as-seen/episode{id}", name="mark_as_seen")
      */
     public function mark_as_seen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -117,7 +133,7 @@ class UserSeriesController extends AbstractController
     }
 
     /**
-     * @Route("/mark_as_not_seen/episode{id}", name="mark_as_not_seen")
+     * @Route("/mark-as-not-seen/episode{id}", name="mark_as_not_seen")
      */
     public function mark_as_not_seen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
     {

@@ -1,14 +1,77 @@
-{% extends "base.html.twig" %}
+{% extends 'base.html.twig' %}
 
-{% block title %}New serie presentation{% endblock %}
+{% block body %}
+	<div class="container">
 
-{% block body %}        
+		<div class="d-flex justify-content-around">
 
-    <h1>Series information for {{serie.imdbID}}</h1>
-    <p>Title: {{serie.Title}}</p>
-    <img src="{{ serie.Poster }}" class="show-img-left" alt="poster"/>
-    <p>Date: {{serie.Year}}</p>
-    <p>Plot: {{serie.Plot}}</p>
-    <p>Awards: {{serie.Awards}}</p>
+			<!-- Left column -->
+			<div class="d-flex flex-column">
 
+				<!-- Title and poster -->
+				<h2>{{ serie.Title }}</h2>
+				<img src="{{ serie.Poster }}" class="show-img-left" alt="poster"/>
+
+				<!-- Year start and end -->
+				<em>{{ serie.Year }}</em>
+
+				<!-- Genres -->
+				<section class="mt-2">
+					Genres: 
+					{% for genre in serie.Genre|split(',') %}
+						<a href="{{path('explore_series', {'category': genre})}}">
+							<span>{{ genre }}</span>
+						</a>
+					{% endfor %}
+				</section>
+
+                <!-- Country -->
+                <p>From {{ serie.Country }}</p>
+
+			</div>
+
+			<!-- Right column -->
+			<div class="ml-5 mt-5">
+
+				<!-- First section: Series informations -->
+				<div class="d-flex flex-column justify-content-center mb">
+
+					<h4> 
+						<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ serie.imdbID }}">IMDB</a>
+						average ratings : {{ serie.imdbRating }} 
+					</h4>
+
+					<!-- Awards -->
+                    <h5 class="text-warning">
+                        Awards: 
+                        {% if "N/A" not in serie.Awards %}
+                            {{ serie.Awards }}
+                        {% else %}
+                            None
+					    {% endif %}
+                    </h5>
+
+					<!-- Plot -->
+                    <h5>Plot</h5>
+					<p>{{ serie.Plot }}</p>
+
+					<!-- Director & Actors list -->
+                    <h5>Director</h5>
+                    <p class="list-group-item list-group-item-success">{{ serie.Director }}</p>
+
+					<h5>Actors</h5>
+					<ul class="list-group list-group-horizontal-sm">
+						{% for actor in serie.Actors|split(',') %}
+							<li class="list-group-item list-group-item-danger">{{ actor }}</li>
+						{% endfor %}
+					</ul>
+
+				</div>
+			</div>
+		</div>
+
+        <a href="{{ path('home') }}" class="btn btn-primary">Add this serie</a>
+        <a href="{{ path('search_imdb_serie') }}" class="btn btn-danger">Cancel</a>
+
+	</div>
 {% endblock %}

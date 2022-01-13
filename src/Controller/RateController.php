@@ -7,7 +7,7 @@ use App\Entity\Rating;
 use App\Entity\Series;
 use App\Repository\SeriesRepository;
 use App\Repository\RatingRepository;
-use App\Form\RateType;
+use App\Form\RateFormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/rate")
+ * @Route("/user/rate")
  */
 class RateController extends AbstractController
 {
@@ -25,10 +25,16 @@ class RateController extends AbstractController
      */
     public function add_rate(Series $serie, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
     {
-        $this->verify_user();
+        // Verify that the user is loged in and not an admin
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('user_login');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
+        }
 
         $rate = new Rating();
-        $form = $this->createForm(RateType::class, $rate);
+        $form = $this->createForm(RateFormType::class, $rate);
         $form->handleRequest($request);
 
         // If form was submited and valid, then add the rating and go back to serie's page
@@ -37,7 +43,7 @@ class RateController extends AbstractController
         }
 
         // Else render the form
-        return $this->render('rate/rate.html.twig', [
+        return $this->render('user/rate.html.twig', [
             'serie' => $serie,
             'form' => $form->createView()
         ]);
@@ -48,10 +54,16 @@ class RateController extends AbstractController
      */
     public function modify_rate(Series $serie, Request $request, SeriesRepository $repository, EntityManagerInterface $entityManager): Response
     {
-        $this->verify_user();
+        // Verify that the user is loged in and not an admin
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('user_login');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
+        }
 
         $rating = $serie->getRatingByUser($this->getUser());
-        $form = $this->createForm(RateType::class, $rating);
+        $form = $this->createForm(RateFormType::class, $rating);
         $form->handleRequest($request);
 
         // If form was submited and valid, then modift the rating and go back to the serie's page
@@ -60,7 +72,7 @@ class RateController extends AbstractController
         }
 
         // Else render the form
-        return $this->render('rate/rate.html.twig', [
+        return $this->render('user/rate.html.twig', [
             'serie' => $serie,
             'form' => $form->createView()
         ]);
@@ -75,7 +87,7 @@ class RateController extends AbstractController
         $entityManager->remove($rate); 
         $entityManager->flush();       
 
-        return $this->redirectToRoute('moderation');
+        return $this->redirectToRoute('comments_moderation');
     }
 
 
@@ -84,9 +96,15 @@ class RateController extends AbstractController
      */
     public function see_rate(Series $serie): Response
     {
-        $this->verify_user();
+        // Verify that the user is loged in and not an admin
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('user_login');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
+        }
         
-        return $this->render('rate/see_rate.html.twig', [
+        return $this->render('user/see_rate.html.twig', [
             'serie' => $serie,
             'rating' => $serie->getRatingByUser($this->getUser()),
         ]);
@@ -108,7 +126,7 @@ class RateController extends AbstractController
         $entityManager->persist($rate); // save rating
         $entityManager->flush();    // Update the changes made in the databse
 
-        return $this->redirectToRoute('series_show', ['id' => $serie->getId()]);
+        return $this->redirectToRoute('series_presentation', ['id' => $serie->getId()]);
     }
 
     /**
@@ -124,21 +142,6 @@ class RateController extends AbstractController
         $entityManager->persist($rate); // save rating
         $entityManager->flush();        // Update the changes made in the databse
 
-        return $this->redirectToRoute('series_show', ['id' => $rate->getSeries()->getId()]);
-    }
-
-    /**
-     * Redirect the user to the login page if he's not connected,
-     * or to the home page if he's an admin.
-     */
-    private function verify_user()
-    {
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
-
-        if ($this->getUser()->getAdmin()) {
-            return $this->redirectToRoute('home');
-        }
+        return $this->redirectToRoute('series_presentation', ['id' => $rate->getSeries()->getId()]);
     }
 }

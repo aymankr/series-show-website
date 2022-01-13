@@ -2,33 +2,53 @@
 
 namespace App\Form;
 
-use App\Search\SearchComments;
+use App\Entity\Country;
+use App\Entity\Genre;
+use App\Search\Search;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ModerationFormType extends AbstractType
+class SearchSerieFormType extends AbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('searchUser', TextType::class, [
+        
+            ->add('s', TextType::class, [
                 'label' => false,
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Search by user name'
+                    'placeholder' => 'Search by name'
                 ]
             ])
-            ->add('searchSerie', TextType::class, [
+
+            ->add('countries', EntityType::class, [
                 'label' => false,
                 'required' => false,
-                'attr' => [
-                    'placeholder' => 'Search by serie title'
-                ]
+                'class' => Country::class,
+                'expanded' => true,
+                'multiple' => true
             ])
+
+            ->add('categories', EntityType::class, [
+                'label' => false,
+                'required' => false,
+                'class' => Genre::class,
+                'expanded' => true,
+                'multiple' => true
+            ])
+
+            ->add('followed', CheckboxType::class, [
+                'label' => 'Series I follow',
+                'required' => false,
+            ])
+
             ->add('submit', SubmitType::class, [
                 'label' => 'Search',
                 'attr' => [
@@ -40,7 +60,7 @@ class ModerationFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => SearchComments::class,
+            'data_class' => Search::class,
             'method' => 'GET'
         ]);
     }

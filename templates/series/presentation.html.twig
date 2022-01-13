@@ -31,7 +31,7 @@
 				<section class="mt-2">
 					Genres: 
 					{% for category in serie.getGenre() %}
-						<a href="{{path('series_index', {'category':category.name})}}">
+						<a href="{{path('explore_series', {'category':category.name})}}">
 							<span>{{ category.name }}</span>
 						</a>
 					{% endfor %}
@@ -53,7 +53,7 @@
 			
 				<!-- Comments moderation button -->
 				{% if app.user and app.user.admin %}
-					<a class="btn btn-success w-100 mt-2" href="{{ path('moderation', {'id': serie.id}) }}">See all comments</a>
+					<a class="btn btn-success w-100 mt-2" href="{{ path('comments_moderation', {'id': serie.id}) }}">See all comments</a>
 				{% endif %}
 			</div>
 
@@ -146,6 +146,6 @@
 			{% endfor %}
 		</div>
 
-		<a href="{{ path('series_index') }}">back to list</a>
+		<a href="{{ path('explore_series') }}">back to list</a>
 	</div>
 {% endblock %}

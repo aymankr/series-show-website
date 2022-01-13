@@ -60,7 +60,9 @@
 				<div class="dropdown-menu">
 
 				{% if app.user %}
-					<a class="dropdown-item" href="{{ path('user_account') }}">Account</a>
+					{% if not app.user.admin %}
+						<a class="dropdown-item" href="{{ path('user_account') }}">Account</a>
+					{% endif %}
 					<a class="dropdown-item" href="{{ path('user_logout') }}">Log out</a>
 				{% else %}
 					<a class="dropdown-item" href="{{ path('user_register') }}">Register</a>
@@ -78,15 +80,15 @@
 						Moderation
 					</button>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="{{ path('moderation') }}">Moderate comments</a>
-						<a class="dropdown-item" href="{{ path('add_series') }}">Add new series</a>
+						<a class="dropdown-item" href="{{ path('comments_moderation') }}">Moderate comments</a>
+						<a class="dropdown-item" href="{{ path('search_imdb_serie') }}">Add new series</a>
 					</div>
 				{% else %}
 					<a href="{{ path('user_series') }}" class="navbar-brand mb-0 h1">My series</a>
 				{% endif %}
 			</li>
 			<li>
-				<a href="{{ path('series_index') }}" class="navbar-brand mb-0 h1">Explore</a>
+				<a href="{{ path('explore_series') }}" class="navbar-brand mb-0 h1">Explore</a>
 			</li>
 			<li>
 				<a href="" class="navbar-brand mb-0 h1">About</a>

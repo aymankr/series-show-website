@@ -6,7 +6,7 @@
 {% block body %}
 
 	<div class="container">
-		{% include 'moderation/_filter_comments.html.twig' with {form : form} only %}
+		{% include 'admin/comments_moderation/_filter_comments.html.twig' with {form : form} only %}
 
 		<div class="d-flex justify-content-start mb">
 			{{ knp_pagination_sortable(ratings, 'By date', 'r.date' )}}
@@ -14,7 +14,7 @@
 		<ul class="list-group">
 			{% for rating in ratings %}
 				<li class="list-group-item list-group-item-success">
-					{% include 'moderation/_preview_comments.html.twig' with {ratings: rating} only %}
+					{% include 'admin/comments_moderation/_preview_comments.html.twig' with {ratings: rating} only %}
                 </li>
 			{% endfor %}
 		</ul>

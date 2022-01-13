@@ -2,53 +2,33 @@
 
 namespace App\Form;
 
-use App\Entity\Country;
-use App\Entity\Genre;
-use App\Search\Search;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Search\SearchComments;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SearchType extends AbstractType
+class CommentsModerationFormType extends AbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        
-            ->add('s', TextType::class, [
+            ->add('searchUser', TextType::class, [
                 'label' => false,
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Search by name'
+                    'placeholder' => 'Search by user name'
                 ]
             ])
-
-            ->add('countries', EntityType::class, [
+            ->add('searchSerie', TextType::class, [
                 'label' => false,
                 'required' => false,
-                'class' => Country::class,
-                'expanded' => true,
-                'multiple' => true
+                'attr' => [
+                    'placeholder' => 'Search by serie title'
+                ]
             ])
-
-            ->add('categories', EntityType::class, [
-                'label' => false,
-                'required' => false,
-                'class' => Genre::class,
-                'expanded' => true,
-                'multiple' => true
-            ])
-
-            ->add('followed', CheckboxType::class, [
-                'label' => 'Series I follow',
-                'required' => false,
-            ])
-
             ->add('submit', SubmitType::class, [
                 'label' => 'Search',
                 'attr' => [
@@ -60,7 +40,7 @@ class SearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Search::class,
+            'data_class' => SearchComments::class,
             'method' => 'GET'
         ]);
     }

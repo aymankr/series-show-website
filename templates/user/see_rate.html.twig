@@ -1,4 +1,4 @@
-{% extends 'rate/rate.html.twig' %}
+{% extends 'user/rate.html.twig' %}
 
 {% block title %}Modify rating
 {% endblock %}
@@ -17,7 +17,7 @@
 		<!-- Modify & Go back button -->
 		<div>
 			<a class="btn btn-primary" href="{{ path('modify_series_rate', {'id': serie.id }) }}">Modify</a>
-			<a class="btn btn-danger" href="{{ path('series_show', {'id': serie.id }) }}">Go back</a>
+			<a class="btn btn-danger" href="{{ path('series_presentation', {'id': serie.id }) }}">Go back</a>
 		</div>
 	</div>
 {% endblock %}
