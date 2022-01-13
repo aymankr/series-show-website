@@ -59,7 +59,11 @@
 				<!-- First section: Series informations -->
 				<div class="d-flex flex-column justify-content-center mb">
 
-					<h4> {{ serie.getExternalRatingValue() }} </h4>
+					<h4> 
+						<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ serie.getImdb() }}">IMDB
+						</a>
+						average ratings : {{ serie.getExternalRatingValue() }} 
+					</h4>
 
 					<!-- Awards -->
 					{% if "N/A" not in serie.awards %}
@@ -108,8 +112,15 @@
 							<li class="list-group-item list-group-item-warning m-1 xsmall">
 
 								<!-- Episode informations -->
-								Episode n°{{ episode.getNumber() }}: {{ episode.getTitle() }} | 
-								Release date: {{ episode.date.format('Y-m-d') }} </br>
+								<strong>Episode n°{{ episode.getNumber() }}</strong>: {{ episode.getTitle() }} | 
+								Release date: {{ episode.date.format('Y-m-d') }} |
+								
+								<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ episode.getImdb() }}">IMDB 
+									<strong>{{ episode.getImdbrating() }}
+									</strong>
+								</a>
+								</br>
+
 
 								<!-- Mark as seen or not seen button -->
 								{% if app.user and episode in app.user.getEpisode() %}

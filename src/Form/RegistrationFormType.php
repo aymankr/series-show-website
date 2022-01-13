@@ -85,7 +85,7 @@ class RegistrationFormType extends AbstractType
                 'length' => 7,
                 'quality' => 40,
                 'invalid_message' => 'It does not match with the captcha',
-                'disabled' => true
+                'disabled' => false
             ])
 
             // Submit button
