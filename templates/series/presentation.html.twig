@@ -3,14 +3,17 @@
 {% block body %}
 	<div class="container">
 
-		<div class="d-flex justify-content-around">
+		<div
+			class="d-flex justify-content-around">
 
 			<!-- Left column -->
-			<div class="d-flex flex-column">
+			<div
+				class="d-flex flex-column">
 
 				<!-- Title and poster -->
 				<h2>{{ serie.title }}</h2>
-				<img src="{{ path('series_poster', {'id': serie.id})}}" class="show-img-left" alt="poster"/>
+				<a href="{{ path('series_poster', {'id': serie.id}) }}"><img
+				src="{{ path('series_poster', {'id': serie.id})}}" class="show-img-left" alt="poster"/></a>
 
 				<!-- Year start and end -->
 				<em>
@@ -28,10 +31,10 @@
 				</em>
 
 				<!-- Genres -->
-				<section class="mt-2">
-					Genres: 
+				<section class="m-3">
+					Genres:
 					{% for category in serie.getGenre() %}
-						<a href="{{path('explore_series', {'category':category.name})}}">
+						<a class="btn btn-success" href="{{path('explore_series', {'category':category.name})}}">
 							<span>{{ category.name }}</span>
 						</a>
 					{% endfor %}
@@ -50,7 +53,7 @@
 				{% else %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
 				{% endif %}
-			
+
 				<!-- Comments moderation button -->
 				{% if app.user and app.user.admin %}
 					<a class="btn btn-success w-100 mt-2" href="{{ path('comments_moderation', {'id': serie.id}) }}">See all comments</a>
@@ -58,15 +61,17 @@
 			</div>
 
 			<!-- Right column -->
-			<div class="ml-5 mt-5">
+			<div
+				class="ml-5 mt-5">
 
 				<!-- First section: Series informations -->
 				<div class="d-flex flex-column justify-content-center mb">
 
-					<h4> 
+					<h4>
 						<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ serie.getImdb() }}">IMDB
 						</a>
-						average ratings : {{ serie.getExternalRatingValue() }} 
+						average ratings :
+						{{ serie.getExternalRatingValue() }}
 					</h4>
 
 					<!-- Awards -->
@@ -75,7 +80,7 @@
 							{{ serie.awards }}
 						</h5>
 					{% endif %}
-					
+
 					<!-- Number of followers -->
 					<h5>
 						Followed by
@@ -102,50 +107,23 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Second section: Series seasons & episodes -->
 		<div class="container m-3">
 			<h3>Seasons and episodes</h3>
-			{% for season in serie.getSeasonsOrdered() %}
-				<details>
-				<!-- Season n -->
-				<summary>Season {{ season.number }} </summary>
-				<article>
-					<ul class="list-style-type-none p-0">
-						{% for episode in season.getEpisodesOrdered() %}
-							<li class="list-group-item list-group-item-warning m-1 xsmall">
-
-								<!-- Episode informations -->
-								<strong>Episode n°{{ episode.getNumber() }}</strong>: {{ episode.getTitle() }} | 
-								Release date: {{ episode.date.format('Y-m-d') }} |
-								
-								<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ episode.getImdb() }}">IMDB 
-									<strong>{{ episode.getImdbrating() }}
-									</strong>
-								</a>
-								</br>
-
-
-								<!-- Mark as seen or not seen button -->
-								{% if app.user and episode in app.user.getEpisode() %}
-									<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'id': episode.id}) }}">
-										Mark as not seen
-									</a>
-								{% else %}
-									<a class="btn btn-primary" href="{{ path('mark_as_seen', {'id': episode.id}) }}">
-										Mark as seen
-									</a>
-								{% endif %}
-
-							</li>
-						{% endfor %}
-					</ul>
-				</article>
-				
-				</details>
-			{% endfor %}
+			{{ knp_pagination_render(seasons) }}
+			<ul class="list-group">
+				{% for season in serie.getSeasonsOrdered() %}
+					<li class="list-group-item list-group-item-success">
+						<a class="link-warning text-danger" href="{{ path('series_season_presentation', {'number': season.number, 'id': serie.id }) }}">
+							<strong>Season
+							{{ season.number }} <strong>
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
 		</div>
 
-		<a href="{{ path('explore_series') }}">back to list</a>
+		<a class="btn btn-danger" href="{{ path('explore_series') }}">Back</a>
 	</div>
 {% endblock %}

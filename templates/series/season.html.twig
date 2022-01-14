@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div
+		class="container">
+		<!-- Season n -->
+		<h4>Season
+			{{ seasonNumber }}
+		</h4>
+		<ul class="list-group p-0">
+			{% for episode in season.getEpisodesOrdered() %}
+				<li
+					class="list-group-item list-group-item-warning m-1 xsmall">
+
+					<!-- Episode informations -->
+					<strong>Episode n°{{ episode.getNumber() }}</strong>:
+					{{ episode.getTitle() }}
+					| 
+																																Release date:
+					{{ episode.date.format('Y-m-d') }}
+					|
+
+					<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ episode.getImdb() }}">IMDB
+						<strong>{{ episode.getImdbrating() }}
+						</strong>
+					</a>
+
+					<!-- Mark as seen or not seen button -->
+					{% if app.user and episode in app.user.getEpisode() %}
+						<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'id': episode.id}) }}">
+							Mark as not seen
+						</a>
+					{% else %}
+						<a class="btn btn-primary" href="{{ path('mark_as_seen', {'id': episode.id}) }}">
+							Mark as seen
+						</a>
+					{% endif %}
+
+				</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock %}

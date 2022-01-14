@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Series;
 use App\Entity\Genre;
 use App\Form\SearchSerieFormType;
+use App\Form\SeasonsPresentationFormType;
 use App\Repository\SeriesRepository;
+use App\Repository\SeasonRepository;
 use App\Search\Search;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,12 +56,33 @@ class SeriesController extends AbstractController
     /**
      * @Route("/presentation/{id}", name="series_presentation", methods={"GET"})
      */
-    public function presentation(Series $serie): Response
+    public function presentation(Series $serie, Request $request, SeasonRepository $seasonRepository): Response
     {
+        $search = new Search();
+        $search->page = $request->get('page', 1);
+
+        $seasons = $seasonRepository->getSeasons($serie, $search);
+        dump($seasons);
+
         return $this->render('series/presentation.html.twig', [
             'serie' => $serie,
+            'seasons'=> $seasons,
         ]);
     }
+
+     /**
+     * @Route("/presentation/{id}/season/{number}", name="series_season_presentation", methods={"GET"})
+     */
+    public function seasonsPresentation(int $id, int $number, SeriesRepository $seriesRepository): Response
+    {
+        $serie = $seriesRepository->find($id);
+        $season = $serie->getSeasons()[$number-1];
+        return $this->render('series/season.html.twig', [
+            'serie' => $serie,
+            'seasonNumber' => $number,
+            'season' => $season
+        ]);
+    }   
 
     /**
      * @Route("/poster/{id}", name="series_poster", methods={"GET"})

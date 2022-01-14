@@ -95,7 +95,7 @@ class SeriesRepository extends ServiceEntityRepository
             ->select('s')
             ->leftJoin('s.ratings', 'r')
             ->orderBy('r.value', 'DESC')
-            ->setMaxResults(3);
+            ->setMaxResults(4);
 
         return $query->getQuery()->getResult();
     }
