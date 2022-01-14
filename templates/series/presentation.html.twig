@@ -41,16 +41,16 @@
 				</section>
 
 				<!-- Follow or unfollow button -->
-				{% if app.user and serie in app.user.series %}
+				{% if app.user and not app.user.admin and serie in app.user.series %}
 					<a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
-				{% else %}
+				{% elseif not app.user or (app.user and not app.user.admin) %}
 					<a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
 				{% endif %}
 
 				<!-- Rate button -->
-				{% if app.user and serie.hasBeenRatedByUser(app.user) %}
+				{% if app.user and not app.user.admin and serie.hasBeenRatedByUser(app.user) %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('see_rate', {'id': serie.id}) }}">See my rating</a>
-				{% else %}
+				{% elseif not app.user or (app.user and not app.user.admin) %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
 				{% endif %}
 
@@ -89,12 +89,16 @@
 					</h5>
 
 					<!-- Trailer & Plot -->
-					<figure class="w-100 h-300">
-						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" title="trailer"></iframe>
-					</figure>
-					<p>
-						{{ serie.plot }}
-					</p>
+					{% if app.user and serie.hasBeenRatedByUser(app.user) %}
+						<figure class="w-100 h-300">
+							<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" 
+									title="trailer"/>
+						</figure>
+					{% else %}
+						<h6 class="text-danger">Trailer unavailable.</h6>
+					{% endif %}
+
+					<p>{{ serie.plot }}</p>
 
 					<!-- Actors list -->
 					<h5>Actors</h5>

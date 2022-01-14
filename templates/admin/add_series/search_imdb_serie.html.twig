@@ -4,8 +4,13 @@
 
 {% block body %}
 
-    {% if not serie_found %}
+    {% if not serieFound %}
         <h4>The given ID does not correspond to any IMDb serie.</h4>
+    {% endif %}
+    {% if existingSerie != null %}
+        <h4>This serie already exists in the database: 
+            <a href="{{ path('series_presentation', {'id': existingSerie.id}) }}">{{ existingSerie.title }}</a>.
+        </h4>
     {% endif %}
 
     {{ form_start(form) }}
