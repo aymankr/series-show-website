@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}About this website
+{% endblock %}
+
+{% block body %}
+    <style>
+        tr {
+            border-bottom: 2pt solid white;
+            margin-bottom:5px;
+        }
+    </style>
+
+	<div class="container">
+		<h1>Groupe : S3-A</h1>
+		<h2>KACHMAR Ayman - SPARTON Alexandre</h2>
+
+		<table>
+			<thead>
+				<tr>
+					<th width="500px">Fonctionnalité | 
+					</th>
+					<th>Pas&nbsp;abordée | 
+					</th>
+					<th>Pas&nbsp;terminée | 
+					</th>
+					<th>Fonctionnelle | 
+					</th>
+					<th>Commentaire (éventuel)
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>Une page d'accueil présentant le site</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Un menu facilitant la navigation dans le site</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Une page "à propos", décrivant le travail réalisé et précisant
+						                    la liste des auteurs du site (le binôme), et éventuellement les
+						                    difficultés rencontrées (ainsi que ce tableau)</th>
+					<td>X
+					</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Une page présentant l'ensemble des séries de la base de
+						                    données, l'affichage doit être paginé et il doit être possible de
+						                    rechercher des séries</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>La possibilité de naviguer dans les saisons d'une série, puis dans les épisodes</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td>A finir</td>
+				</tr>
+				<tr>
+					<th>Chaque fois que c'est pertinent on affichera le poster de la série</th>
+					<td>X</td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Chaque fois que c'est pertinent on affichera le trailer
+						<em>YouTube</em>
+					</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Chaque fois que c'est pertinent on affichera un lien vers la fiche
+						<em>IMDB</em>
+						de la série ou de l'épisode
+					</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>La possibilité pour un utilisateur de s'inscrire et de se connecter avec un suivi de session</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Respect des mesures classiques de sécurité (mot de passe non stocké en clair, CAPTCHA à
+						                    l'inscription...)</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>En étant inscrit et connecté seulement, possibilité de noter
+						                    une série, en ajoutant éventuellement un commentaire optionnel (table
+						<kbd>rating</kbd>)</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td>A finir</td>
+				</tr>
+				<tr>
+					<th>En étant inscrit et connecté seulement, possibilité de classer
+						                    les séries par note moyenne croissante ou décroissante (en utilisant les
+						                    notes postées par les utilisateurs du site)</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>En étant inscrit et connecté seulement, possibilité de
+						                    "suivre" des séries (à l'aide de la table
+						<kbd>user_series</kbd>) et ces séries
+							                    sont accessibles
+					</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>En étant inscrit et connecté seulement, possibilité de marquer
+						                    un épisode comme vu ou non vu. De cette manière, l'utilisateur doit
+						                    pouvoir visualiser où il en est dans le visionnage d'une série. Il est
+						                    pertinent de remonter l'information dans la page "saisons"</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Un utilisateur administrateur doit pouvoir modérer les commentaires en les supprimant</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Un administrateur devrait pouvoir incorporer des nouvelles séries dans la base de données à l'aide de l'API
+						<em>OMDB</em>
+					</th>
+					<td>X</td>
+					<td></td>
+					<td>X</td>
+					<td>A finir</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+{% endblock %}

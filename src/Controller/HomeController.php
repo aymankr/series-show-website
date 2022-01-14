@@ -27,4 +27,12 @@ class HomeController extends AbstractController
             'trendingSeries' => $trendingSeries
         ]);
     }
+
+    /**
+     * @Route("/about", name="about")
+     */
+    public function about(): Response
+    {
+        return $this->render('home/about.html.twig');
+    }
 }
