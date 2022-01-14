@@ -54,8 +54,13 @@
 	<body>
 		<ul class="navbar navbar-dark bg-danger">
 			<li class="dropdown">
-				<button class="btn btn-danger dropdown-toggle navbar-brand mb-0" type="button" data-toggle="dropdown">
+				<button class="btn btn-danger dropdown-toggle 	navbar-brand mb-0" type="button" data-toggle="dropdown">
 					Account
+					{% if app.user and app.user.admin %}
+						(admin)
+					{% elseif app.user and not app.user.admin %}
+						({{ app.user.name }})
+					{% endif %}
 				</button>
 				<div class="dropdown-menu">
 
