@@ -38,16 +38,16 @@
 				</section>
 
 				<!-- Follow or unfollow button -->
-				{% if app.user and serie in app.user.series %}
+				{% if app.user and not app.user.admin and serie in app.user.series %}
 					<a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
-				{% else %}
+				{% elseif not app.user or (app.user and not app.user.admin) %}
 					<a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
 				{% endif %}
 
 				<!-- Rate button -->
-				{% if app.user and serie.hasBeenRatedByUser(app.user) %}
+				{% if app.user and not app.user.admin and serie.hasBeenRatedByUser(app.user) %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('see_rate', {'id': serie.id}) }}">See my rating</a>
-				{% else %}
+				{% elseif not app.user or (app.user and not app.user.admin) %}
 					<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
 				{% endif %}
 			
