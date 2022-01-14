@@ -9,12 +9,20 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\CommentsModerationFormType;
 use App\Form\AddSerieFormType;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Search\SearchComments;
 use App\Repository\GenreRepository;
 use App\Repository\ActorRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\RatingRepository;
-use App\Search\SearchComments;
+use App\Repository\ExternalRatingSourceRepository;
+use App\Repository\CountryRepository;
+use App\Entity\Series;
+use App\Entity\Genre;
+use App\Entity\Actor;
+use App\Entity\ExternalRating;
+use App\Entity\Country;
 
 /**
  * @Route("/admin")
@@ -55,7 +63,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/search-imdb-serie", name="search_imdb_serie")
      */
-    public function search_imdb_serie(Request $request): Response
+    public function search_imdb_serie(Request $request, SeriesRepository $seriesRepository): Response
     {
         // Verify that the user is an admin
         if (!$this->getUser()) {
@@ -70,14 +78,26 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            // Get the imdb from the form response
+            $userImdb = $form->get('imdb_id')->getData();
+            $existingSerie = $seriesRepository->findOneBy(['imdb' => $userImdb]);
+            if ($existingSerie) {
+                return $this->render('admin/add_series/search_imdb_serie.html.twig', [
+                    'form' => $form->createView(),
+                    'serieFound' => true,
+                    'existingSerie' => $existingSerie
+                ]);
+            }
+
             // Request the omdb api
-            $request_url = "https://www.omdbapi.com/?i=".$form->get('imdb_id')->getData()."&apikey=".AdminController::$omdb_key;
+            $request_url = "https://www.omdbapi.com/?i=".$userImdb."&apikey=".AdminController::$omdb_key;
             $api_response = $this->api_client->request('GET', $request_url);
 
-            $serie_found = $api_response->getHeaders()['cf-cache-status'][0] == 'HIT';
+            $serieFound = $api_response->getHeaders()['cf-cache-status'][0] == 'HIT';
+
 
             // Present the serie if found
-            if ($serie_found) {
+            if ($serieFound) {
                 return $this->render('admin/add_series/serie_presentation.html.twig', [
                     'serie' => $api_response->toArray()
                 ]);
@@ -86,54 +106,152 @@ class AdminController extends AbstractController
             // Else ask to give an id again
             return $this->render('admin/add_series/search_imdb_serie.html.twig', [
                 'form' => $form->createView(),
-                'serie_found' => false
+                'serieFound' => false,
+                'existingSerie' => null
             ]);
             
         }
 
         return $this->render('admin/add_series/search_imdb_serie.html.twig', [
             'form' => $form->createView(),
-            'serie_found' => true
+            'serieFound' => true,
+            'existingSerie' => null
         ]);
     }
 
     /**
-     * @Route("/add-serie/{serie-infos}", name="add_serie")
+     * @Route("/add-serie/{serieImdb}", name="add_serie")
      */
-    public function add_serie(array $serie_infos, GenreRepository $genre_repository, ActorRepository $actor_repository, 
+    public function add_serie(string $serieImdb, GenreRepository $genreRepository, ActorRepository $actorRepository, 
+                              ExternalRatingSourceRepository $externRatingSrcRepo, CountryRepository $countryRepository,
                               EntityManagerInterface $entityManager): Response
     {
-        /*$serie = new Series();
+        // Get the imdb infos through the API
+        $requestUrl = "https://www.omdbapi.com/?i=".$serieImdb."&apikey=".AdminController::$omdb_key;
+        $apiResponse = $this->api_client->request('GET', $requestUrl);
+        $serieInfos = $apiResponse->toArray();
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();   // to access the array data
 
-        // Add the simple informations
-        $serie->setImdb($serie_infos['imdbID']);
-        $serie->setTitle($serie_infos['Title']);
-        $serie->setPlot($serie_infos['Plot']);
-        $serie->setDirector($serie_infos['Director']);
-        $serie->setPoster($serie_infos['Poster']);
-        $serie->setYearStart(explode('-', $serie_infos['Year'])[0]);
-        $serie->addCountry($serie_infos['Country']);
-        $serie->setAwards($serie_infos['Awards']);
+        // Create the new serie
+        $serie = new Series();
+
+        // Add the basic informations
+        $serie->setImdb($serieImdb);
+        $serie->setTitle($propertyAccessor->getValue($serieInfos, '[Title]'));
+        $serie->setPlot($propertyAccessor->getValue($serieInfos, '[Plot]'));
+        $serie->setDirector($propertyAccessor->getValue($serieInfos, '[Director]'));
+        $serie->setAwards($propertyAccessor->getValue($serieInfos, '[Awards]'));
         $serie->setYoutubeTrailer(NULL);
         
-        // Year end
-        if (count(explode('-', $serie_infos['Year'])) > 1) {
-            $serie->setYearEnd(explode('-', $serie_infos['Year'])[1]);
+        // Add poster
+        $posterFile = file_get_contents($propertyAccessor->getValue($serieInfos, '[Poster]'));
+        $serie->setPoster($posterFile);
+        
+        // Year start & end
+        $years = explode('-', $propertyAccessor->getValue($serieInfos, '[Year]'));
+        $serie->setYearStart(intval($years[0]));
+        
+        if (count($years) > 1) {
+            $serie->setYearEnd(intval($years[1]));
         }
         else {
             $serie->setYearEnd(NULL);
         }
+        
+        // Add country
+        $serieCountry = $this->getNewCountry($propertyAccessor->getValue($serieInfos, '[Country]'), $serie, $countryRepository);
+        $serie->addCountry($serieCountry);
+        $entityManager->persist($serieCountry);
+
+        // Add ratings
+        $newExternRating = $this->getNewExternalRating($propertyAccessor->getValue($serieInfos, '[Ratings]')[0]['Value'], 
+        $propertyAccessor->getValue($serieInfos, '[imdbVotes]'), 
+        $serie, $externRatingSrcRepo);
 
         // Add genres
-        foreach ($serie_infos['Genres'] as $genre) {
-            $serie->addGenre($genre_repository->findOneBy(['name' => $genre]));
+        $imdbGenres = explode(', ', $propertyAccessor->getValue($serieInfos, '[Genre]'));
+        foreach ($imdbGenres as $imdbGenre) {
+            $genre = $this->getNewSerieGenre($imdbGenre, $serie, $genreRepository);
+            $serie->addGenre($genre);
+            $entityManager->persist($genre);
         }
 
         // Add actors
-        foreach ($serie_infos['Actors'] as $actor) {
-            $serie->addActor($actor_repository->findOneBy(['name' => $actor]));
-        }*/
+        $imdbActors = explode(', ', $propertyAccessor->getValue($serieInfos, '[Actors]'));
+        foreach ($imdbActors as $imdbActor) {
+            $actor = $this->getNewSerieActor($imdbActor, $serie, $actorRepository);
+            $serie->addActor($actor);
+            $entityManager->persist($actor);
+        }
 
-        return $this->redirectToRoute('search_imdb_serie');
+        // Commit the changes to the database
+        $entityManager->persist($newExternRating);
+        $entityManager->persist($serie);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('series_presentation', ['id' => $serie->getId()]);
+    }
+
+    /**
+     * Get the corresponding given imdb genre from the database, and create a new genre if necessary.
+     */
+    private function getNewSerieGenre(string $imdbGenreName, Series $serie, GenreRepository $genreRepository)
+    {
+        $newSerieGenre = $genreRepository->findOneBy(['name' => $imdbGenreName]);
+
+        // If not found, create a new genre
+        if (!$newSerieGenre) {
+            $newSerieGenre = new Genre();
+            $newSerieGenre->setName($imdbGenreName);
+        }
+        
+        $newSerieGenre->addSeries($serie);  // Add the serie to the genre anyway
+        return $newSerieGenre;
+    }
+
+    /**
+     * Get the corresponding given imdb actor from the database, and create a new actor if necessary.
+     */
+    private function getNewSerieActor(string $imdbActorName, Series $serie, ActorRepository $actorRepository)
+    {
+        $newSerieActor = $actorRepository->findOneBy(['name' => $imdbActorName]);
+
+        // If not found, create a new genre
+        if (!$newSerieActor) {
+            $newSerieActor = new Actor();
+            $newSerieActor->setName($imdbActorName);
+        }
+        
+        $newSerieActor->addSeries($serie);  // Add the serie to the genre anyway
+        return $newSerieActor;
+    }
+
+    /**
+     * Get the corresponding given country from the database, and create a new country if necessary.
+     */
+    private function getNewCountry(string $imdbCountryName, Series $serie, CountryRepository $countryRepository)
+    {
+        $newCountry = $countryRepository->findOneBy(['name' => $imdbCountryName]);
+
+        // If not found, create a new genre
+        if (!$newCountry) {
+            $newCountry = new Country();
+            $newCountry->setName($imdbCountryName);
+        }
+        
+        $newCountry->addSeries($serie);  // Add the serie to the genre anyway
+        return $newCountry;
+    }
+
+
+    private function getNewExternalRating(string $imdbRatingValue, string $imdbVotes, 
+                                          Series $serie, ExternalRatingSourceRepository $externRatingSrcRepo)
+    {
+        $externalRating = new ExternalRating();
+        $externalRating->setSource($externRatingSrcRepo->find(ExternalRatingSourceRepository::$IMDB_ID));
+        $externalRating->setValue($imdbRatingValue);
+        $externalRating->setVotes((int)str_replace( ',', '', $imdbVotes));
+        $externalRating->setSeries($serie);
+        return $externalRating;
     }
 }

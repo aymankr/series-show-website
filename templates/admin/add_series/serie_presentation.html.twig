@@ -70,7 +70,7 @@
 			</div>
 		</div>
 
-        <a href="{{ path('home') }}" class="btn btn-primary">Add this serie</a>
+        <a href="{{ path('add_serie', {'serieImdb': serie.imdbID }) }}" class="btn btn-primary">Add this serie</a>
         <a href="{{ path('search_imdb_serie') }}" class="btn btn-danger">Cancel</a>
 
 	</div>
