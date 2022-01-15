@@ -174,6 +174,14 @@ class Series
         return $this->plot;
     }
 
+    public function getPlotLimitedCharacters(): ?string
+    {
+        if (strlen($this->plot) > 150) {
+            return substr($this->plot, 0, 150).'...';
+        }
+        return $this->plot;
+    }    
+
     public function setPlot(?string $plot): self
     {
         $this->plot = $plot;

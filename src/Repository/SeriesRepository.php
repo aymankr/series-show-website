@@ -86,7 +86,7 @@ class SeriesRepository extends ServiceEntityRepository
 
         $query = $query->getQuery();
 
-        return $this->paginator->paginate($query, $search->page, 6, array('wrap-queries' => true));
+        return $this->paginator->paginate($query, $search->page, 4, array('wrap-queries' => true));
     }
 
     public function getTrendingSeries()

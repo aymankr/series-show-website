@@ -1,38 +1,42 @@
-<div class="preview">
+<div class="row m-1">
+	<div class="col-md-3">
+		<a href="{{path('series_presentation', {'id': serie.id})}}">
+			<img src="{{ path('series_poster', {'id': serie.id})}}" class="preview-img-top" style="max-width: 100px; height: auto; " alt="poster"/>
+		</a>
 
-    <a href="{{path('series_presentation', {'id': serie.id})}}" class="preview-title"> {{ serie.title }} </a>
-    
-    <a href="{{path('series_presentation', {'id': serie.id})}}"> 
-                <img src="{{ path('series_poster', {'id': serie.id})}}" class="preview-img-top" 
-                     style="  max-width:100%; max-height:80%;" alt="poster"/>
-                </a>
-    <div class="preview-body">
-        <div class="preview-title"> {{ serie.yearStart }}
-        </div>
+ 		<div class="float-left mt-3">
+			{% if app.user and app.user.admin %}
+				<a class="btn btn-success mt-2" href="{{ path('comments_moderation', {'id': serie.id}) }}">See all comments</a>
+			{% elseif app.user and serie in app.user.series %}
+				<a class="btn btn-warning" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
+			{% elseif not app.user or (app.user and serie not in app.user.series) %}
+				<a class="btn btn-warning" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
+			{% endif %}
+		</div>       
+	</div>
 
-        {% if app.user != NULL %}
-            {% if serie.getAverageRating() == -1 %} 
-                <em> No one rated this serie. </em>
-            {% else %}
-                <em> Average of user ratings : {{ serie.getAverageRating() }}</em>
-            {% endif %}
-        {% endif %}
-        <div>
-            {% if app.user and app.user.admin %}
-                <a class="btn btn-success mt-2" href="{{ path('comments_moderation', {'id': serie.id}) }}">See all comments</a>
-            {% elseif app.user and serie in app.user.series %}
-                <a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
-            {% elseif not app.user or (app.user and serie not in app.user.series) %}
-                <a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
-            {% endif %}
-        </div>
-        <!-- imdb, youtube trailer, awards, year strart, end, action show-->
-        <p class="text text-muted">{{ serie.plot }}</p>
-
-        <div>
-            {% for genre in serie.genre %}
-                <em class="text-muted text-italic">#{{ genre.name }}</em>
-            {% endfor %}
-        </div>
-    </div>
+	<div class="col-md-9 p-2">
+		<a href="{{path('series_presentation', {'id': serie.id})}}" class="h5">
+			{{ serie.title }}
+		</a> <em class="small float-right">{{ serie.yearStart }} {% if serie.yearEnd %}- {{ serie.yearEnd }}{% endif %}</em>
+		<div>
+			{% for genre in serie.genre %}
+				<em class="text-muted text-italic">#{{ genre.name }}</em>
+			{% endfor %}
+		</div>
+		<div>
+			{% if app.user != NULL %}
+				<p class="small">
+					{% if serie.getAverageRating() != -1 %}
+						Average of user ratings :
+						{{ serie.getAverageRating() }}/10
+					{% else %}
+						No one rated this serie.
+					{% endif %}
+				</p>
+			{% endif %}
+			<!-- imdb, youtube trailer, awards, year strart, end, action show-->
+			<p class"small">{{ serie.getPlotLimitedCharacters }}</p>
+		</div>
+	</div>
 </div>

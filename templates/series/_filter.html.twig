@@ -1,26 +1,33 @@
 {{ form_start(form) }}
 
-    {{ form_row(form.s) }}
-    
-    {{ form_row(form.submit) }}
-    <h4>Countries</h4>
+<div class="row d-flex justify-content-around">
+	<section>
+		{{ form_row(form.s) }}
 
-    {{ form_row(form.countries) }}
+		{{ form_row(form.submit) }}
+	</section>
+	<section>
+		<h4>Countries</h4>
 
-    <h4>Categories</h4>
+		{{ form_row(form.countries) }}
+	</section>
+	<section>
+		<h4>Categories</h4>
 
-    {{ form_row(form.categories) }}
+		{{ form_row(form.categories) }}
+	</section>
+	<section>
+		{% block followed %}
 
-    {% block followed %}
+			<h4 class="d-inline">Followed series</h4>
 
-        <h4 class="d-inline">Followed series</h4>
+			{% if app.user and not app.user.admin %}
+				{{ form_row(form.followed) }}
+			{% else %}
+				{{ form_row(form.followed, { 'attr': {'disabled': 'true' }}) }}
+			{% endif %}
 
-        {% if app.user and not app.user.admin %}
-            {{ form_row(form.followed) }}
-        {% else %}
-            {{ form_row(form.followed, { 'attr': {'disabled': 'true' }}) }}
-        {% endif %}
-    
-    {% endblock %}
-
+		{% endblock %}
+	</section>
+</div>
 {{ form_end(form) }}

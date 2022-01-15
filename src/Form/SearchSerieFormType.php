@@ -4,7 +4,9 @@ namespace App\Form;
 
 use App\Entity\Country;
 use App\Entity\Genre;
+use App\Repository\CountryRepository;
 use App\Search\Search;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -32,7 +34,6 @@ class SearchSerieFormType extends AbstractType
                 'label' => false,
                 'required' => false,
                 'class' => Country::class,
-                'expanded' => true,
                 'multiple' => true
             ])
 
@@ -40,7 +41,6 @@ class SearchSerieFormType extends AbstractType
                 'label' => false,
                 'required' => false,
                 'class' => Genre::class,
-                'expanded' => true,
                 'multiple' => true
             ])
 
