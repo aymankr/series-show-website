@@ -93,7 +93,7 @@ class SeriesRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('s')
             ->select('s')
-            ->leftJoin('s.ratings', 'r')
+            ->leftJoin('s.externalRating', 'r')
             ->orderBy('r.value', 'DESC')
             ->setMaxResults(4);
 

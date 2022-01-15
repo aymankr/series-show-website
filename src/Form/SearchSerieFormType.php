@@ -34,14 +34,14 @@ class SearchSerieFormType extends AbstractType
                 'label' => false,
                 'required' => false,
                 'class' => Country::class,
-                'multiple' => true
+                'multiple' => true,
             ])
 
             ->add('categories', EntityType::class, [
                 'label' => false,
                 'required' => false,
                 'class' => Genre::class,
-                'multiple' => true
+                'multiple' => true,
             ])
 
             ->add('followed', CheckboxType::class, [
