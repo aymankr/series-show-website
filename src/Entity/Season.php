@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -75,11 +76,26 @@ class Season
     }
 
     /**
-     * @return Collection|Season[] ordered by number
+     * @return Collection|Episode[] ordered by number
      */
     public function getEpisodesOrdered(): Collection
     {
         $sort = new Criteria(null, ['number' => Criteria::ASC]);
         return $this->episodes->matching($sort);
+    }
+
+    /**
+     * @return int the number of episode seen in this season by the given user.
+     */
+    public function getNumberOfSeenEpisode(User $user): int
+    {
+        $counter = 0;
+        foreach ($this->episodes as $episode) {
+            if ($episode->getUser()->contains($user)) {
+                $counter++;
+            }
+        }
+
+        return $counter;
     }
 }
