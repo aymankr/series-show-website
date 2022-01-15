@@ -7,8 +7,9 @@
 		<h4>Season
 			{{ seasonNumber }}
 		</h4>
+		{{ knp_pagination_render(episodes) }}
 		<ul class="list-group p-0">
-			{% for episode in season.getEpisodesOrdered() %}
+			{% for episode in episodes %}
 				<li
 					class="list-group-item list-group-item-warning m-1 xsmall">
 
