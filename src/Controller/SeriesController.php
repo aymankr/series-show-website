@@ -73,7 +73,7 @@ class SeriesController extends AbstractController
     public function seasonsPresentation(int $id, int $number, SeriesRepository $seriesRepository, PaginatorInterface $paginator, Request $request): Response
     {
         $serie = $seriesRepository->find($id);
-        $season = $serie->getSeasons()[$number-1];
+        $season = $serie->getSeasonsOrdered()[$number-1];
         $episodes = $paginator->paginate($season->getEpisodesOrdered(), $request->query->getInt('page', 1), 8);
 
         return $this->render('series/season.html.twig', [

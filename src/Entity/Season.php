@@ -67,24 +67,11 @@ class Season
         return $this;
     }
 
-    public function getSeries(): ?Series
-    {
-        return $this->series;
-    }
-
     public function setSeries(?Series $series): self
     {
         $this->series = $series;
 
         return $this;
-    }
-
-    /**
-     * @return Collection|Season[]
-     */
-    public function getEpisodes(): Collection
-    {
-        return $this->episodes;
     }
 
     /**

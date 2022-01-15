@@ -61,7 +61,7 @@ class Episode
     /**
      * @var \Season
      *
-     * @ORM\ManyToOne(targetEntity="Season")
+     * @ORM\ManyToOne(targetEntity="Season", inversedBy="episodes")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="season_id", referencedColumnName="id")
      * })
@@ -159,15 +159,7 @@ class Episode
 
         return $this;
     }
-
-    /**
-     * @return Collection|User[]
-     */
-    public function getUser(): Collection
-    {
-        return $this->user;
-    }
-
+    
     public function addUser(User $user): self
     {
         if (!$this->user->contains($user)) {
@@ -177,14 +169,4 @@ class Episode
 
         return $this;
     }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->user->removeElement($user)) {
-            $user->removeEpisode($this);
-        }
-
-        return $this;
-    }
-
 }

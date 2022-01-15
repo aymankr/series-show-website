@@ -62,13 +62,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $admin = '0';
 
     /**
-     * @var string|null
-     *
-     * @ORM\Column(name="user_id", type="string", length=128, nullable=true, options={"default"="NULL"})
-     */
-    private $userId = 'NULL';
-
-    /**
      * @var \Country
      *
      * @ORM\ManyToOne(targetEntity="Country")
@@ -175,25 +168,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->admin;
     }
 
-    public function setAdmin(bool $admin): self
-    {
-        $this->admin = $admin;
-
-        return $this;
-    }
-
-    public function getUserId(): ?string
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(?string $userId): self
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
     public function getCountry(): ?Country
     {
         return $this->country;
@@ -207,13 +181,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Episode[]
+     * @return Collection|Episode[] all the episode marked as seen by the user.
      */
     public function getEpisode(): Collection
     {
         return $this->episode;
     }
 
+    /**
+     * Add the given episode to the user if not already added (mark as seen).
+     * 
+     * @param Episode $episode the episode to add.
+     */
     public function addEpisode(Episode $episode): self
     {
         if (!$this->episode->contains($episode)) {
@@ -223,6 +202,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Remove the given episode to the user (mark as not seen).
+     * 
+     * @param Episode $episode the episode to remove
+     */
     public function removeEpisode(Episode $episode): self
     {
         $this->episode->removeElement($episode);
@@ -231,13 +215,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Series[]
+     * @return Collection|Series[] all the series followed by the user.
      */
     public function getSeries(): Collection
     {
         return $this->series;
     }
 
+    /**
+     * Add the given serie to the user if not already added (follow).
+     * 
+     * @param Series $series the serie to add.
+     */
     public function addSeries(Series $series): self
     {
         if (!$this->series->contains($series)) {
@@ -247,6 +236,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Remove the given serie to the user (unfollow).
+     * 
+     * @param Series $series the serie to remove
+     */
     public function removeSeries(Series $series): self
     {
         $this->series->removeElement($series);
@@ -256,22 +250,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     
     // To implement UserInterface 
 
-    public function getUserIdentifier()
+    /**
+     * @return string
+     */
+    public function getUserIdentifier(): string
     {
         return $this->getId();
     }
 
-    public function getSalt()
+    /**
+     * @return string|null
+     */
+    public function getSalt(): ?string
     { 
         return ''; 
     }
 
-    public function getUsername() 
+    /**
+     * @return string
+     */
+    public function getUsername(): string
     { 
         return $this->getEmail(); 
     }
 
-    public function getRoles() 
+    /**
+     * @return string[]
+     */
+    public function getRoles(): array
     { 
         return ['ROLE_USER'];
     }
