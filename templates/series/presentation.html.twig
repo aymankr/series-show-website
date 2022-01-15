@@ -35,8 +35,8 @@
 						transition: 0.5s;
 					}
 				</style>
-				<!-- Poster -->
 
+				<!-- Poster -->
 				{% if serie.youtubeTrailer %}
 					<div class="serie_poster">
 						<a href="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" target="_blank">
@@ -59,14 +59,14 @@
 			</section>
 
 			<!-- Follow or unfollow button -->
-			{% if app.user and not app.user.admin and serie in app.user.series %}
+			{% if app.user and not app.user.admin and app.user in serie.user %}
 				<a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
 			{% elseif not app.user or (app.user and not app.user.admin) %}
 				<a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
 			{% endif %}
 
 			<!-- Rate button -->
-			{% if app.user and not app.user.admin and serie.hasBeenRatedByUser(app.user) %}
+			{% if app.user and not app.user.admin and serie.getRatingByUser(app.user) %}
 				<a class="btn btn-warning w-100 mt-2" href="{{ path('see_rate', {'id': serie.id}) }}">See my rating</a>
 			{% elseif not app.user or (app.user and not app.user.admin) %}
 				<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
@@ -105,9 +105,11 @@
 					<a class="text-warning" target="_blank" href="https://www.imdb.com/title/{{ serie.getImdb() }}">IMDB
 					</a>
 					average ratings :
-					{{ serie.getExternalRating().value }}<span class="small">,
-						{{serie.getExternalRating().votes }}
-						votes.</span>
+					{% if serie.externalRating and serie.externalRating|length > 0 %}
+						{{ serie.externalRating[0].value }}<span class="small">, {{serie.externalRating[0].votes }}votes.</span>
+					{% else %}
+						Unknown.
+					{% endif %}
 				</h6>
 
 				<!-- Awards -->
@@ -122,22 +124,14 @@
 					Followed by
 					{{ serie.user|length }}
 					people, average ratings :
-					{{ serie.getAverageRating() }}/10
+					{% if serie.getAverageRating() > -1 %}
+						{{ serie.getAverageRating() }}/10
+					{% else %}
+						Unknown.
+					{% endif %}
 				</h6>
 
-				<!-- Trailer & Plot -->
-				<!--
-				{% if serie.youtubeTrailer %}
-					<h6>
-						Trailer
-					</h6>
-					<figure class="w-100 h-300">
-						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" title="trailer"></iframe>
-					</figure>
-				{% else %}
-					<h6 class="text-danger">Trailer unavailable.</h6>
-				{% endif %}
-				-->
+				<!-- Plot -->
 				<section class="mt-4">
 				<h6>Description</h6>
 				<p>{{ serie.plot }}</p>
@@ -147,7 +141,7 @@
 				<h6>Actors</h6>
 				<ul class="list-group list-group-horizontal-sm">
 					{% for actor in serie.actor %}
-						<li class="list-group-item list-group-item-danger">{{ actor.getName() }}</li>
+						<li class="list-group-item list-group-item-danger">{{ actor.name }}</li>
 					{% endfor %}
 				</ul>
 				

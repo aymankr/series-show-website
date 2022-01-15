@@ -46,10 +46,10 @@
 					<!-- Awards -->
                     <h5 class="text-warning">
                         Awards: 
-                        {% if "N/A" not in serie.Awards %}
-                            {{ serie.Awards }}
+                        {% if "N/A" in serie.Awards %}
+							None
                         {% else %}
-                            None
+							{{ serie.Awards }}
 					    {% endif %}
                     </h5>
 
@@ -63,7 +63,13 @@
 
 					<!-- Director & Actors list -->
                     <h5>Director</h5>
-                    <p class="list-group-item list-group-item-success">{{ serie.Director }}</p>
+                    <p class="list-group-item list-group-item-success">
+						{% if "N/A" in serie.Director %}
+							Unkown
+                        {% else %}
+							{{ serie.Awards }}
+					    {% endif %}
+					</p>
 
 					<h5>Actors</h5>
 					<ul class="list-group list-group-horizontal-sm">

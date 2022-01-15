@@ -70,14 +70,6 @@ class Actor
         return $this;
     }
 
-    /**
-     * @return Collection|Series[]
-     */
-    public function getSeries(): Collection
-    {
-        return $this->series;
-    }
-
     public function addSeries(Series $series): self
     {
         if (!$this->series->contains($series)) {
@@ -86,12 +78,4 @@ class Actor
 
         return $this;
     }
-
-    public function removeSeries(Series $series): self
-    {
-        $this->series->removeElement($series);
-
-        return $this;
-    }
-
 }

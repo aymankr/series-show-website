@@ -70,26 +70,11 @@ class Genre
         return $this;
     }
 
-    /**
-     * @return Collection|Series[]
-     */
-    public function getSeries(): Collection
-    {
-        return $this->series;
-    }
-
     public function addSeries(Series $series): self
     {
         if (!$this->series->contains($series)) {
             $this->series[] = $series;
         }
-
-        return $this;
-    }
-
-    public function removeSeries(Series $series): self
-    {
-        $this->series->removeElement($series);
 
         return $this;
     }

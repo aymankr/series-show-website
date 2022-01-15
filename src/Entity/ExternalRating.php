@@ -38,7 +38,7 @@ class ExternalRating
     /**
      * @var \Series
      *
-     * @ORM\ManyToOne(targetEntity="Series")
+     * @ORM\ManyToOne(targetEntity="Series", inversedBy="externalRating")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="series_id", referencedColumnName="id")
      * })
@@ -84,21 +84,11 @@ class ExternalRating
         return $this;
     }
 
-    public function getSeries(): ?Series
-    {
-        return $this->series;
-    }
-
     public function setSeries(?Series $series): self
     {
         $this->series = $series;
 
         return $this;
-    }
-
-    public function getSource(): ?ExternalRatingSource
-    {
-        return $this->source;
     }
 
     public function setSource(?ExternalRatingSource $source): self
@@ -107,6 +97,4 @@ class ExternalRating
 
         return $this;
     }
-
-
 }

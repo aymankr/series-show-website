@@ -133,9 +133,9 @@ class Series
     private $ratings;
 
     /**
-     * @var \ExternalRating
+     * @var \Doctrine\Common\Collections\Collection
      * 
-     * @ORM\OneToOne(targetEntity="ExternalRating", mappedBy="series")
+     * @ORM\OneToMany(targetEntity="ExternalRating", mappedBy="series")
      */
     private $externalRating;
 
@@ -174,6 +174,10 @@ class Series
         return $this->plot;
     }
 
+    /**
+     * @return string the first 150 characters of the plot if too long.
+     * @return string the entire plot if <= to 150 characters.
+     */
     public function getPlotLimitedCharacters(): ?string
     {
         if (strlen($this->plot) > 150) {
@@ -227,6 +231,10 @@ class Series
 
     public function getYoutubeTrailer(): ?string
     {
+        if (!$this->youtubeTrailer) {
+            return null;
+        }
+
         // return only the id of the link
         $results = NULL;
         preg_match('/(http(s|):|)\/\/(www\.|)yout(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $this->youtubeTrailer, $results);
@@ -277,13 +285,18 @@ class Series
     }
 
     /**
-     * @return Collection|Actor[]
+     * @return Collection|Actor[] all the actors of the serie.
      */
     public function getActor(): Collection
     {
         return $this->actor;
     }
 
+    /**
+     * Add an actor to the serie if not already added.
+     * 
+     * @param Actor $actor te actor to add.
+     */
     public function addActor(Actor $actor): self
     {
         if (!$this->actor->contains($actor)) {
@@ -294,23 +307,19 @@ class Series
         return $this;
     }
 
-    public function removeActor(Actor $actor): self
-    {
-        if ($this->actor->removeElement($actor)) {
-            $actor->removeSeries($this);
-        }
-
-        return $this;
-    }
-
     /**
-     * @return Collection|Country[]
+     * @return Collection|Country[] all the countries of the serie.
      */
     public function getCountry(): Collection
     {
         return $this->country;
     }
 
+    /**
+     * Add a country to the serie if not already added.
+     * 
+     * @param Country $country te country to add.
+     */
     public function addCountry(Country $country): self
     {
         if (!$this->country->contains($country)) {
@@ -321,23 +330,19 @@ class Series
         return $this;
     }
 
-    public function removeCountry(Country $country): self
-    {
-        if ($this->country->removeElement($country)) {
-            $country->removeSeries($this);
-        }
-
-        return $this;
-    }
-
     /**
-     * @return Collection|Genre[]
+     * @return Collection|Genre[] all the genres of the serie.
      */
     public function getGenre(): Collection
     {
         return $this->genre;
     }
 
+    /**
+     * Add the given genre to the serie if not already added.
+     * 
+     * @param Genre $genre the genre to add to the serie.
+     */
     public function addGenre(Genre $genre): self
     {
         if (!$this->genre->contains($genre)) {
@@ -348,52 +353,16 @@ class Series
         return $this;
     }
 
-    public function removeGenre(Genre $genre): self
-    {
-        if ($this->genre->removeElement($genre)) {
-            $genre->removeSeries($this);
-        }
-
-        return $this;
-    }
-
     /**
-     * @return Collection|User[]
+     * @return Collection|User[] all the users that follow this serie
      */
     public function getUser(): Collection
     {
         return $this->user;
     }
 
-    public function addUser(User $user): self
-    {
-        if (!$this->user->contains($user)) {
-            $this->user[] = $user;
-            $user->addSeries($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->user->removeElement($user)) {
-            $user->removeSeries($this);
-        }
-
-        return $this;
-    }
-
     /**
-     * @return Collection|Season[]
-     */
-    public function getSeasons(): Collection
-    {
-        return $this->seasons;
-    }
-
-    /**
-     * @return Collection|Season[] ordered by number
+     * @return Collection|Season[] all the seasons of the serie ordered by number
      */
     public function getSeasonsOrdered(): Collection
     {
@@ -401,6 +370,11 @@ class Series
         return $this->seasons->matching($sort);
     }
 
+    /**
+     * Add a new season to the serie if it is not already added.
+     * 
+     * @param Season $season the new season to add.
+     */
     public function addSeason(Season $season): self
     {
         if (!$this->seasons->contains($season)) {
@@ -411,20 +385,8 @@ class Series
         return $this;
     }
 
-    public function removeSeason(Season $season): self
-    {
-        if ($this->seasons->removeElement($season)) {
-            // set the owning side to null (unless already changed)
-            if ($season->getSeries() === $this) {
-                $season->setSeries(null);
-            }
-        }
-
-        return $this;
-    }
-
     /**
-     * @return Collection|Rating[]
+     * @return Collection|Rating[]] all the internal ratings of the serie.
      */
     public function getRatings(): Collection
     {
@@ -432,10 +394,13 @@ class Series
     }
 
     /**
-     * @param User the user that possibly rated this serie
-     * @return Rating|null
+     * Find and return the rating of the given user on the serie.
+     * 
+     * @param User $user the user that possibly rated this serie
+     * @return Rating the rating if the given user has rated this serie before
+     * @return null if no rating has been found
      */
-    public function getRatingByUser(User $user): Rating
+    public function getRatingByUser(User $user): ?Rating
     {
         foreach ($this->ratings as $rating) {
             if ($rating->getUser() === $user) {
@@ -446,19 +411,11 @@ class Series
     }
 
     /**
-     * @param User the user that possibly rated this serie
-     * @return bool
+     * Compute the average internal rating of the serie.
+     * 
+     * @return int the average internal rating of the serie
+     * @return null if the serie is not internaly rated
      */
-    public function hasBeenRatedByUser(User $user): bool
-    {
-        foreach ($this->ratings as $rating) {
-            if ($rating->getUser() === $user) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public function getAverageRating() {
         $sum = $length = 0;
         foreach ($this->ratings as $rating) {
@@ -472,7 +429,7 @@ class Series
     }
 
     /**
-     * @return ExternalRating
+     * @return Collection|ExternalRating[] all the external ratings of the serie.
      */
     public function getExternalRating()
     {

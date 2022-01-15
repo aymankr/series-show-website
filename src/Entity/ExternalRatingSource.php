@@ -44,6 +44,4 @@ class ExternalRatingSource
 
         return $this;
     }
-
-
 }

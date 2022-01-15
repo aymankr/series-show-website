@@ -14,10 +14,10 @@
 					class="list-group-item list-group-item-warning m-1 xsmall">
 
 					<!-- Episode informations -->
-					<strong>Episode n°{{ episode.getNumber() }}</strong>:
-					{{ episode.getTitle() }}
+					<strong>Episode n°{{ episode.number }}</strong>:
+					{{ episode.title }}
 					| 
-																																Release date:
+					Release date:
 					{{ episode.date.format('Y-m-d') }}
 					|
 
@@ -27,7 +27,7 @@
 					</a>
 
 					<!-- Mark as seen or not seen button -->
-					{% if app.user and episode in app.user.getEpisode() %}
+					{% if app.user and episode in app.user.episode %}
 						<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'id': episode.id}) }}">
 							Mark as not seen
 						</a>
