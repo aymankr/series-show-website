@@ -37,12 +37,12 @@
 
 					{% if app.user %}
 						{% if not app.user.admin %}
-							<a class="dropdown-item" href="{{ path('user_account') }}">Account</a>
+							<a class="dropdown-item" href="{{ path('userAccount') }}">Account</a>
 						{% endif %}
-						<a class="dropdown-item" href="{{ path('user_logout') }}">Log out</a>
+						<a class="dropdown-item" href="{{ path('userLogout') }}">Log out</a>
 					{% else %}
-						<a class="dropdown-item" href="{{ path('user_register') }}">Register</a>
-						<a class="dropdown-item" href="{{ path('user_login') }}">Log in</a>
+						<a class="dropdown-item" href="{{ path('userRegister') }}">Register</a>
+						<a class="dropdown-item" href="{{ path('userLogin') }}">Log in</a>
 					{% endif %}
 
 				</div>
@@ -56,15 +56,15 @@
 						Moderation
 					</button>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="{{ path('comments_moderation') }}">Moderate comments</a>
-						<a class="dropdown-item" href="{{ path('search_imdb_serie') }}">Add new series</a>
+						<a class="dropdown-item" href="{{ path('commentsModeration') }}">Moderate comments</a>
+						<a class="dropdown-item" href="{{ path('searchImdbSerie') }}">Add new series</a>
 					</div>
 				{% else %}
-					<a href="{{ path('user_series') }}" class="navbar-brand mb-0 h1">My series</a>
+					<a href="{{ path('userSeries') }}" class="navbar-brand mb-0 h1">My series</a>
 				{% endif %}
 			</li>
 			<li>
-				<a href="{{ path('explore_series') }}" class="navbar-brand mb-0 h1">Explore</a>
+				<a href="{{ path('exploreSeries') }}" class="navbar-brand mb-0 h1">Explore</a>
 			</li>
 			<li>
 				<a href="{{ path('about') }}" class="navbar-brand mb-0 h1">About</a>

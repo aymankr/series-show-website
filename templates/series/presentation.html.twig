@@ -40,19 +40,19 @@
 				{% if serie.youtubeTrailer %}
 					<div class="serie_poster">
 						<a href="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" target="_blank">
-							<img src="{{ path('series_poster', {'id': serie.id})}}" class="show-img-left" alt="poster">
+							<img src="{{ path('seriesPoster', {'id': serie.id})}}" class="show-img-left" alt="poster">
 							<button class="btn">Watch the trailer</button>
 						</a>
 					</div>
 				{% else %}
-					<img src="{{ path('series_poster', {'id': serie.id})}}" class="show-img-left" alt="poster">
+					<img src="{{ path('seriesPoster', {'id': serie.id})}}" class="show-img-left" alt="poster">
 				{% endif %}
 
 				<!-- Genres -->
 				<section class="mt-3 mb-3">
 					Genres:</br>
 				{% for category in serie.genre %}
-					<a class="btn btn-success mt-1" href="{{path('explore_series', {'category':category.name})}}">
+					<a class="btn btn-success mt-1" href="{{path('exploreSeries', {'category':category.name})}}">
 						<span>{{ category.name }}</span>
 					</a>
 				{% endfor %}
@@ -67,14 +67,14 @@
 
 			<!-- Rate button -->
 			{% if app.user and not app.user.admin and serie.getRatingByUser(app.user) %}
-				<a class="btn btn-warning w-100 mt-2" href="{{ path('see_rate', {'id': serie.id}) }}">See my rating</a>
+				<a class="btn btn-warning w-100 mt-2" href="{{ path('seeRate', {'id': serie.id}) }}">See my rating</a>
 			{% elseif not app.user or (app.user and not app.user.admin) %}
-				<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
+				<a class="btn btn-warning w-100 mt-2" href="{{ path('addSeriesRate', {'id': serie.id}) }}">Rate</a>
 			{% endif %}
 
 			<!-- Comments moderation button -->
 			{% if app.user and app.user.admin %}
-				<a class="btn btn-success w-100 mt-2" href="{{ path('comments_moderation', {'id': serie.id}) }}">See all comments</a>
+				<a class="btn btn-success w-100 mt-2" href="{{ path('commentsModeration', {'id': serie.id}) }}">See all comments</a>
 			{% endif %}
 		</div>
 
@@ -156,7 +156,7 @@
 		<ul class="list-group">
 			{% for season in seasons %}
 				<li class="list-group-item list-group-item-success">
-					<a class="link-warning text-danger" href="{{ path('series_season_presentation', {'number': season.number, 'id': serie.id }) }}">
+					<a class="link-warning text-danger" href="{{ path('seriesSeasonSresentation', {'number': season.number, 'id': serie.id }) }}">
 						<strong>Season
 							{{ season.number }}
 							<strong></a>
@@ -166,6 +166,6 @@
 			</ul>
 		</div>
 
-		<a class="btn btn-danger" href="{{ path('explore_series') }}">Back</a>
+		<a class="btn btn-danger" href="{{ path('exploreSeries') }}">Back</a>
 	</div>
 {% endblock %}

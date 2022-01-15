@@ -6,7 +6,7 @@
 		,
 		<em>the
 			{{ ratings.date.format('Y-m-d') }}</em>, has commented "{{ ratings.comment }}", for the serie "{{ ratings.series.title }}".
-		<a class="btn btn-primary" href="{{ path('delete_series_rate', {'id': ratings.id}) }}">
+		<a class="btn btn-primary" href="{{ path('deleteSeriesRate', {'id': ratings.id}) }}">
 			Delete
 		</a>
 

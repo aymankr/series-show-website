@@ -2,13 +2,13 @@
 
 namespace App\Repository;
 
-use App\Entity\Series;
-use App\Entity\User;
-use App\Search\Search;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Entity\Series;
+use App\Entity\User;
+use App\Search\Search;
 
 /**
  * @method Series|null find($id, $lockMode = null, $lockVersion = null)

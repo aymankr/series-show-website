@@ -6,24 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\FormInterface;
 use App\Form\CommentsModerationFormType;
 use App\Form\AddSerieFormType;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Search\SearchComments;
-use App\Repository\GenreRepository;
-use App\Repository\ActorRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\RatingRepository;
-use App\Repository\ExternalRatingSourceRepository;
-use App\Repository\CountryRepository;
-use App\Entity\Series;
-use App\Entity\Genre;
-use App\Entity\Actor;
-use App\Entity\ExternalRating;
-use App\Entity\Country;
-use App\Entity\Season;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * @Route("/admin")
@@ -31,19 +20,29 @@ use App\Entity\Season;
 class AdminController extends AbstractController
 {
 
-    private $api_client;
-    private static $omdb_key = "78a49509";
+    private $httpClient;
+    private static $omdbKey = "78a49509";
+
+    // The paths of the pages to render
+    private static $searchNewSeriePage = 'admin/add_series/search_imdb_serie.html.twig';
+    private static $newSerieOverviewPage = 'admin/add_series/new_serie_overview.html.twig';
+    private static $commentsModerationPage = 'admin/comments_moderation/see_comments.html.twig';
 
     public function __construct(HttpClientInterface $client)
     {
-        $this->api_client = $client;
+        $this->httpClient = $client;
     }
 
     /**
-     * @Route("/comments-moderation", name="comments_moderation")
+     * @Route("/comments-moderation", name="commentsModeration")
      */
-    public function comments_moderation(Request $request, RatingRepository $ratingRepository, SeriesRepository $seriesRepository): Response
+    public function commentsModeration(Request $request, RatingRepository $ratingRepository, SeriesRepository $seriesRepository): Response
     {
+        // Verify that the user is connected and is an admin
+        if ($isNotAdmin = $this->verifyUserIsAdmin()) {
+            return $isNotAdmin;
+        }
+
         $search = new SearchComments();
         $search->page = $request->get('page', 1);
         if (isset($_GET['id'])) {
@@ -55,23 +54,20 @@ class AdminController extends AbstractController
 
         $ratings = $ratingRepository->getRatings($search);
 
-        return $this->render('admin/comments_moderation/see_comments.html.twig', [
+        return $this->render(AdminController::$commentsModerationPage, [
             'ratings'=> $ratings,
             'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/search-imdb-serie", name="search_imdb_serie")
+     * @Route("/search-imdb-serie", name="searchImdbSerie")
      */
-    public function search_imdb_serie(Request $request, SeriesRepository $seriesRepository): Response
+    public function searchImdbSerie(Request $request, SeriesRepository $seriesRepository): Response
     {
-        // Verify that the user is an admin
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('user_login');
-        }
-        if (!$this->getUser()->getAdmin()) {
-            return $this->redirectToRoute('home');
+        // Verify that the user is connected and is an admin
+        if ($isNotAdmin = $this->verifyUserIsAdmin()) {
+            return $isNotAdmin;
         }
 
         $form = $this->createForm(AddSerieFormType::class);
@@ -79,33 +75,26 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // Get the imdb from the form response
-            $userImdb = $form->get('imdb_id')->getData();
-            $existingSerie = $seriesRepository->findOneBy(['imdb' => $userImdb]);
-            if ($existingSerie) {
-                return $this->render('admin/add_series/search_imdb_serie.html.twig', [
-                    'form' => $form->createView(),
-                    'serieFound' => true,
-                    'existingSerie' => $existingSerie
-                ]);
+            $userImdb = $form->get('imdbId')->getData();
+
+            // Verify that the given imdb id does not correspond in any serie in the db
+            if ($alreadyExists = $this->verifySerieIsNotInDB($userImdb, $form, $seriesRepository)) {
+                return $alreadyExists;
             }
 
-            // Request the omdb api
-            $request_url = "https://www.omdbapi.com/?i=".$userImdb."&apikey=".AdminController::$omdb_key;
-            $api_response = $this->api_client->request('GET', $request_url);
-
-            $serieFound = $api_response->getHeaders()['cf-cache-status'][0] == 'HIT';
-
+            // If not request the omdb api
+            $requestUrl = "https://www.omdbapi.com/?i=".$userImdb."&apikey=".AdminController::$omdbKey;
+            $apiResponse = $this->httpClient->request('GET', $requestUrl);
 
             // Present the serie if found
-            if ($serieFound) {
-                return $this->render('admin/add_series/new_serie_overview.html.twig', [
-                    'serie' => $api_response->toArray()
+            if ($apiResponse->getHeaders()['cf-cache-status'][0] == 'HIT') {
+                return $this->render(AdminController::$newSerieOverviewPage, [
+                    'serie' => $apiResponse->toArray()
                 ]);
             }
             
             // Else ask to give an id again
-            return $this->render('admin/add_series/search_imdb_serie.html.twig', [
+            return $this->render(AdminController::$searchNewSeriePage, [
                 'form' => $form->createView(),
                 'serieFound' => false,
                 'existingSerie' => null
@@ -113,7 +102,7 @@ class AdminController extends AbstractController
             
         }
 
-        return $this->render('admin/add_series/search_imdb_serie.html.twig', [
+        return $this->render(AdminController::$searchNewSeriePage, [
             'form' => $form->createView(),
             'serieFound' => true,
             'existingSerie' => null
@@ -121,166 +110,46 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/add-serie/{serieImdb}", name="add_serie")
+     * Verify that the imdb given by the user does not correspond to any serie in the database.
+     * 
+     * @param string $userImdb the imdb id given by the user through the form
+     * @param FormInterface $submitedForm the form submited by the user
+     * 
+     * @return Response to search new serie page if found in db
+     * @return null if not found in db
      */
-    public function add_serie(string $serieImdb, GenreRepository $genreRepository, ActorRepository $actorRepository, 
-                              ExternalRatingSourceRepository $externRatingSrcRepo, CountryRepository $countryRepository,
-                              EntityManagerInterface $entityManager): Response
+    private function verifySerieIsNotInDB(string $userImdb, FormInterface $submitedForm, SeriesRepository $seriesRepository): ?Response
     {
-        // Get the imdb infos through the API
-        $requestUrl = "https://www.omdbapi.com/?i=".$serieImdb."&apikey=".AdminController::$omdb_key;
-        $apiResponse = $this->api_client->request('GET', $requestUrl);
-        $serieInfos = $apiResponse->toArray();
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();   // to access the array data
+        $existingSerie = $seriesRepository->findOneBy(['imdb' => $userImdb]);
 
-        // Create the new serie
-        $serie = new Series();
-
-        // Add the basic informations
-        $serie->setImdb($serieImdb);
-        $serie->setTitle($propertyAccessor->getValue($serieInfos, '[Title]'));
-        $serie->setPlot($propertyAccessor->getValue($serieInfos, '[Plot]'));
-        $serie->setAwards($propertyAccessor->getValue($serieInfos, '[Awards]'));
-        $serie->setYoutubeTrailer(NULL);
-        
-        // Add director
-        if ($propertyAccessor->getValue($serieInfos, '[Director]') != 'N/A') {
-            $serie->setDirector($propertyAccessor->getValue($serieInfos, '[Director]'));
-        } else {
-            $serie->setDirector(NULL);
+        // If found, tell the admin that the serie already exists in the database
+        if ($existingSerie) {
+            return $this->render(AdminController::$searchNewSeriePage, [
+                'form' => $submitedForm->createView(),
+                'serieFound' => true,
+                'existingSerie' => $existingSerie
+            ]);
         }
 
-        // Add poster
-        $posterFile = file_get_contents($propertyAccessor->getValue($serieInfos, '[Poster]'));
-        $serie->setPoster($posterFile);
-        
-        // Year start & end
-        $years = explode('-', $propertyAccessor->getValue($serieInfos, '[Year]'));
-        $serie->setYearStart(intval($years[0]));
-        
-        if (count($years) > 1) {
-            $serie->setYearEnd(intval($years[1]));
-        }
-        else {
-            $serie->setYearEnd(NULL);
-        }
-        
-        // Add country
-        $serieCountry = $this->getNewCountry($propertyAccessor->getValue($serieInfos, '[Country]'), $serie, $countryRepository);
-        $serie->addCountry($serieCountry);
-        $entityManager->persist($serieCountry);
-
-        // Add ratings if it has
-        if (count($propertyAccessor->getValue($serieInfos, '[Ratings]')) > 0) {
-            $newExternRating = $this->getNewExternalRating($propertyAccessor->getValue($serieInfos, '[Ratings]')[0]['Value'], 
-                                                           $propertyAccessor->getValue($serieInfos, '[imdbVotes]'), 
-                                                           $serie, $externRatingSrcRepo);
-            $entityManager->persist($newExternRating);                                                           
-        }
-
-        // Add genres
-        $imdbGenres = explode(', ', $propertyAccessor->getValue($serieInfos, '[Genre]'));
-        foreach ($imdbGenres as $imdbGenre) {
-            $genre = $this->getNewSerieGenre($imdbGenre, $serie, $genreRepository);
-            $serie->addGenre($genre);
-            $entityManager->persist($genre);
-        }
-
-        // Add actors
-        $imdbActors = explode(', ', $propertyAccessor->getValue($serieInfos, '[Actors]'));
-        foreach ($imdbActors as $imdbActor) {
-            $actor = $this->getNewSerieActor($imdbActor, $serie, $actorRepository);
-            $serie->addActor($actor);
-            $entityManager->persist($actor);
-        }
-
-        // Add seasons
-        for ($i = 1; $i <= $propertyAccessor->getValue($serieInfos, '[totalSeasons]'); $i++) {
-            $entityManager->persist($this->addNewSeason($i, $serie));
-        }
-
-        // Commit the changes to the database
-        $entityManager->persist($serie);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('series_presentation', ['id' => $serie->getId()]);
+        // Else return null
+        return null;
     }
 
     /**
-     * Get the corresponding given imdb genre from the database, and create a new genre if necessary.
+     * Verify that the user is connected and is an admin.
+     * 
+     * @return Response to login page if the user is not connected
+     * @return Response to home page if the user connected is not an admin
+     * @return null if the user connected is an admin
      */
-    private function getNewSerieGenre(string $omdbGenreName, Series $serie, GenreRepository $genreRepository)
+    private function verifyUserIsAdmin(): ?Response
     {
-        $newSerieGenre = $genreRepository->findOneBy(['name' => $omdbGenreName]);
-
-        // If not found, create a new genre
-        if (!$newSerieGenre) {
-            $newSerieGenre = new Genre();
-            $newSerieGenre->setName($omdbGenreName);
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('userLogin');
         }
-        
-        $newSerieGenre->addSeries($serie);  // Add the serie to the genre anyway
-        return $newSerieGenre;
-    }
-
-    /**
-     * Get the corresponding given imdb actor from the database, and create a new actor if necessary.
-     */
-    private function getNewSerieActor(string $omdbActorName, Series $serie, ActorRepository $actorRepository)
-    {
-        $newSerieActor = $actorRepository->findOneBy(['name' => $omdbActorName]);
-
-        // If not found, create a new actor
-        if (!$newSerieActor) {
-            $newSerieActor = new Actor();
-            $newSerieActor->setName($omdbActorName);
+        if (!$this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
         }
-        
-        $newSerieActor->addSeries($serie);  // Add the serie to the actor
-        return $newSerieActor;
-    }
-
-    /**
-     * Get the corresponding given country from the database, and create a new country if necessary.
-     */
-    private function getNewCountry(string $omdbCountryName, Series $serie, CountryRepository $countryRepository)
-    {
-        if ($omdbCountryName === 'United States') {
-            $omdbCountryName = 'USA';
-        }
-
-        $newCountry = $countryRepository->findOneBy(['name' => $omdbCountryName]);
-
-        // If not found, create a new country
-        if (!$newCountry) {
-            $newCountry = new Country();
-            $newCountry->setName($omdbCountryName);
-        }
-        
-        $newCountry->addSeries($serie);  // Add the serie to the country
-        return $newCountry;
-    }
-
-    private function getNewExternalRating(string $imdbRatingValue, string $imdbVotes, 
-                                          Series $serie, ExternalRatingSourceRepository $externRatingSrcRepo)
-    {
-        $externalRating = new ExternalRating();
-        $externalRating->setSource($externRatingSrcRepo->find(ExternalRatingSourceRepository::$IMDB_ID));
-        $externalRating->setValue($imdbRatingValue);
-        $externalRating->setVotes((int)str_replace( ',', '', $imdbVotes));
-        $externalRating->setSeries($serie);
-        return $externalRating;
-    }
-
-    /**
-     * Create a new season with the given number and serie and returns it.
-     */
-    private function addNewSeason(int $seasonNumber, Series $serie): Season
-    {
-        $newSeason = new Season();
-        $newSeason->setNumber($seasonNumber);
-        $newSeason->setSeries($serie);
-        $serie->addSeason($newSeason);
-        return $newSeason;
+        return null;
     }
 }

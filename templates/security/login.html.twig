@@ -14,7 +14,7 @@
 				<div class="mb-3">
 					You are logged in as
 					{{ app.user.username }},
-					<a href="{{ path('user_logout') }}">Logout</a>
+					<a href="{{ path('userLogout') }}">Logout</a>
 				</div>
 			{% endif %}
 
@@ -33,14 +33,12 @@
 				</label>
 			</div>
 
-			<p>
-				You don't have an account ?
-				<a href="{{ path('user_register') }}">Sign up here</a>.
-			</p>
-
 			<button class="btn btn-lg btn-primary" type="submit">
 				Log in
 			</button>
+
+			<p>You don't have an account ?<a href="{{ path('userRegister') }}">Sign up here</a>.</p>
+
 		</form>
 	</div>
 {% endblock %}

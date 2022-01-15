@@ -2,50 +2,48 @@
 
 namespace App\Controller;
 
-use App\Entity\Episode;
-use App\Entity\Genre;
-use App\Entity\Series;
-use App\Form\SearchSerieFormType;
-use App\Repository\SeriesRepository;
-use App\Search\Search;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\SearchSerieFormType;
+use App\Search\Search;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Episode;
+use App\Entity\Genre;
+use App\Entity\Series;
+use App\Repository\SeriesRepository;
 
 /**
  * @Route("/user")
  */
 class UserController extends AbstractController
 {
+    // The paths of the pages to render
+    private static $accountPage = 'user/account.html.twig';
+    private static $mySeriesPage = 'user/user_series.html.twig';
+
     /**
-     * @Route("/account", name="user_account")
+     * @Route("/account", name="userAccount")
      */
     public function account(): Response
     {
-        // Verify that a user is loged in and not an admin
-        if ($this->getUser() == null) {
-            return $this->redirectToRoute('user_login');
-        }
-        if ($this->getUser()->getAdmin()) {
-            return $this->redirectToRoute('home');
+        // Verify that the user is connected and is a normal user
+        if ($isNotNormalUser = $this->verifyNormalUser()) {
+            return $isNotNormalUser;
         }
 
-        return $this->render('user/account.html.twig');
+        return $this->render(UserController::$accountPage);
     }
 
     /**
-     * @Route("/my-series", name="user_series", methods={"GET"})
+     * @Route("/my-series", name="userSeries", methods={"GET"})
      */
-    public function user_series(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response 
+    public function userSeries(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response 
     {
-        // Verify user connection
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('user_login');
-        }
-        if ($this->getUser()->getAdmin()) {
-            return $this->redirectToRoute('home');
+        // Verify that the user is connected and is a normal user
+        if ($isNotNormalUser = $this->verifyNormalUser()) {
+            return $isNotNormalUser;
         }
 
         $search = new Search();
@@ -65,7 +63,7 @@ class UserController extends AbstractController
 
         $serie = $repository->getSeriesUserConnected($search, $this->getUser());
 
-        return $this->render('user/user_series.html.twig', [
+        return $this->render(UserController::$mySeriesPage, [
             'serie' => $serie,
             'form' => $form->createView(),
         ]);
@@ -76,16 +74,13 @@ class UserController extends AbstractController
      */
     public function follow(Series $serie, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Verify user connection
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('user_login');
-        }
-        if ($this->getUser()->getAdmin()) {
-            return $this->redirectToRoute('home');
+        // Verify that the user is connected and is a normal user
+        if ($isNotNormalUser = $this->verifyNormalUser()) {
+            return $isNotNormalUser;
         }
 
         $this->getUser()->addSeries($serie);
-        $entityManager->persist($this->getUser()); // save changes locally
+        $entityManager->persist($this->getUser());
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }
@@ -95,60 +90,68 @@ class UserController extends AbstractController
      */
     public function unfollow(Series $serie, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Verify user connection
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('user_login');
-        }
-        if ($this->getUser()->getAdmin()) {
-            return $this->redirectToRoute('home');
+        // Verify that the user is connected and is a normal user
+        if ($isNotNormalUser = $this->verifyNormalUser()) {
+            return $isNotNormalUser;
         }
 
         $this->getUser()->removeSeries($serie);
-        $entityManager->persist($this->getUser()); // save changes locally
+        $entityManager->persist($this->getUser());
         $entityManager->flush();    // Update the changes made in the databse
 
         if (strpos($request->headers->get('referer'), 'my-series') !== false) {
-            return $this->redirectToRoute('user_series');
+            return $this->redirectToRoute('userSeries');
         }
         return $this->redirect($request->headers->get('referer'));
     }
 
     /**
-     * @Route("/mark-as-seen/episode{id}", name="mark_as_seen")
+     * @Route("/mark-as-seen/episode{id}", name="markAsSeen")
      */
-    public function mark_as_seen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
+    public function markAsSeen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Verify user connection
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('user_login');
-        }
-        if ($this->getUser()->getAdmin()) {
-            return $this->redirectToRoute('home');
+        // Verify that the user is connected and is a normal user
+        if ($isNotNormalUser = $this->verifyNormalUser()) {
+            return $isNotNormalUser;
         }
 
         $this->getUser()->addEpisode($episode);
-        $entityManager->persist($this->getUser()); // save changes locally
+        $entityManager->persist($this->getUser());
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }
 
     /**
-     * @Route("/mark-as-not-seen/episode{id}", name="mark_as_not_seen")
+     * @Route("/mark-as-not-seen/episode{id}", name="markAsNotSeen")
      */
-    public function mark_as_not_seen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
+    public function markAsNotSeen(Episode $episode, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Verify user connection
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('user_login');
-        }
-        if ($this->getUser()->getAdmin()) {
-            return $this->redirectToRoute('home');
+        // Verify that the user is connected and is a normal user
+        if ($isNotNormalUser = $this->verifyNormalUser()) {
+            return $isNotNormalUser;
         }
 
         $this->getUser()->removeEpisode($episode);
-        $entityManager->persist($this->getUser()); // save changes locally
+        $entityManager->persist($this->getUser());
         $entityManager->flush();    // Update the changes made in the databse
         return $this->redirect($request->headers->get('referer'));
     }
 
+    /**
+     * Verify that the user is connected and is not an admin.
+     * 
+     * @return Response to login page if the user is not connected
+     * @return Response to home page if the user connected is an admin
+     * @return null if the user connected is not an admin
+     */
+    private function verifyNormalUser(): ?Response
+    {
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('userLogin');
+        }
+        if ($this->getUser()->getAdmin()) {
+            return $this->redirectToRoute('home');
+        }
+        return null;
+    }
 }
