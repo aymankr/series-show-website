@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+	<link type="text/css" href="{{ asset('css/presentation.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+
 {% block body %}
 	<div class="container">
 
@@ -8,33 +13,7 @@
 
 			<!-- Left column -->
 			<div class="d-flex flex-column">
-
-				<style>
-					/* Container needed to position the button. Adjust the width as needed */
-					.serie_poster {
-						position: relative;
-						width: 50%;
-					}
-
-					/* Style the button and place it in the middle of the container/image */
-					.serie_poster .btn {
-						position: absolute;
-						top: 50%;
-						left: 100%;
-						transform: translate(-50%, -50%);
-						-ms-transform: translate(-50%, -50%);
-						background-color: #555;
-						color: white;
-						padding: 12px 24px;
-						border: none;
-						cursor: pointer;
-					}
-
-					.serie_poster:hover {
-						opacity: 0.6;
-						transition: 0.5s;
-					}
-				</style>
+				<!-- Poster -->
 
 				<!-- Poster -->
 				{% if serie.youtubeTrailer %}
