@@ -4,6 +4,8 @@
 	<link type="text/css" href="{{ asset('css/presentation.css') }}" rel="stylesheet"/>
 {% endblock %}
 
+{% block title %}{{ serie.title }}{% endblock %}
+
 {% block body %}
 	<div class="container">
 
@@ -145,6 +147,6 @@
 			</ul>
 		</div>
 
-		<a class="btn btn-danger" href="{{ path('exploreSeries') }}">Back</a>
+		<a class="btn btn-danger" href="{{ path('exploreSeries') }}">Go back</a>
 	</div>
 {% endblock %}

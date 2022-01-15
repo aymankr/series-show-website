@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ serie.title }} - Season {{ season.number }}{% endblock %}
+
 {% block body %}
 	<div
 		class="container">
@@ -7,38 +9,47 @@
 		<h4>Season
 			{{ seasonNumber }}
 		</h4>
-		{{ knp_pagination_render(episodes) }}
-		<ul class="list-group p-0">
-			{% for episode in episodes %}
-				<li
-					class="list-group-item list-group-item-warning m-1 xsmall">
 
-					<!-- Episode informations -->
-					<strong>Episode n°{{ episode.number }}</strong>:
-					{{ episode.title }}
-					| 
-					Release date:
-					{{ episode.date.format('Y-m-d') }}
-					|
+		{% if episodes|length > 0 %}
 
-					<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ episode.getImdb() }}">IMDB
-						<strong>{{ episode.getImdbrating() }}
-						</strong>
-					</a>
+			<ul class="list-group p-0">
+				{% for episode in episodes %}
+					<li
+						class="list-group-item list-group-item-warning m-1 xsmall">
 
-					<!-- Mark as seen or not seen button -->
-					{% if app.user and episode in app.user.episode %}
-						<a class="btn btn-primary" href="{{ path('markAsNotSeen', {'id': episode.id}) }}">
-							Mark as not seen
+						<!-- Episode informations -->
+						<strong>Episode n°{{ episode.number }}</strong>:
+						{{ episode.title }}
+						| 
+						Release date:
+						{{ episode.date.format('Y-m-d') }}
+						|
+
+						<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ episode.getImdb() }}">IMDB
+							<strong>{{ episode.getImdbrating() }}
+							</strong>
 						</a>
-					{% else %}
-						<a class="btn btn-primary" href="{{ path('markAsSeen', {'id': episode.id}) }}">
-							Mark as seen
-						</a>
-					{% endif %}
 
-				</li>
-			{% endfor %}
-		</ul>
+						<!-- Mark as seen or not seen button -->
+						{% if app.user and episode in app.user.episode %}
+							<a class="btn btn-primary" href="{{ path('markAsNotSeen', {'id': episode.id}) }}">
+								Mark as not seen
+							</a>
+						{% else %}
+							<a class="btn btn-primary" href="{{ path('markAsSeen', {'id': episode.id}) }}">
+								Mark as seen
+							</a>
+						{% endif %}
+
+					</li>
+				{% endfor %}
+			</ul>
+			<br/>
+			{{ knp_pagination_render(episodes) }}
+
+		{% else %}
+			<h3 class="text-warning">Sorry, there's no episode available for this season...</h3><br/>
+			<a class="btn btn-primary" href="{{ path('seriesPresentation', {'id': serie.id})}}">Go back</a>
+		{% endif %}
 	</div>
 {% endblock %}

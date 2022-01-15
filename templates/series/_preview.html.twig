@@ -1,5 +1,7 @@
 <div class="row m-1">
-	<div class="col-md-3">
+
+	<!-- Left part -->
+	<article class="col-md-3">
 		<a href="{{path('seriesPresentation', {'id': serie.id})}}">
 			<img src="{{ path('seriesPoster', {'id': serie.id})}}" class="preview-img-top" style="max-width: 100px; height: auto; " alt="poster"/>
 		</a>
@@ -15,7 +17,8 @@
 		</section>       
 	</article>
 
-	<div class="col-md-9 p-2">
+	<!-- Right part -->
+	<article class="col-md-9 p-2">
 		<a href="{{path('seriesPresentation', {'id': serie.id})}}" class="h5">
 			{{ serie.title }}
 		</a> <em class="small float-right">{{ serie.yearStart }} {% if serie.yearEnd %}- {{ serie.yearEnd }}{% endif %}</em>

@@ -19,7 +19,7 @@ class SecurityController extends AbstractController
     private static $loginPage = 'security/login.html.twig';
 
     /**
-     * @Route("/register", name="useRegister")
+     * @Route("/register", name="userRegister")
      */
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {

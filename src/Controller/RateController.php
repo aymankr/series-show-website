@@ -21,8 +21,8 @@ use DateTime;
 class RateController extends AbstractController
 {
     // The paths of the pages to render
-    private static $newRatePage = 'home/index.html.twig';
-    private static $seeRatePage = 'home/about.html.twig';
+    private static $newRatePage = 'user/rate.html.twig';
+    private static $seeRatePage = 'user/see_rate.html.twig';
 
     /**
      * @Route("/add/{id}", name="addSeriesRate")

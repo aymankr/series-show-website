@@ -5,11 +5,11 @@
 
 {% block body %}
 	<div class="container">
-		<h2>My rating on
-			{{ serie.title }}</h2>
+		<h3>{{ serie.title }}</h3>
+		<img src="{{ path('seriesPoster', {'id': serie.id})}}" class="show-img-left" alt="poster">
 
 		<!-- Rating informations -->
-		<p>Mark:
+		<p >Mark:
 			{{ rating.value }}</p>
 		<p>Comment:
 			{{ rating.comment }}</p>
