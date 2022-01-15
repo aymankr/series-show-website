@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ serie.Title }} overview{% endblock %}
+
 {% block body %}
 	<div class="container">
 
@@ -54,6 +56,10 @@
 					<!-- Plot -->
                     <h5>Plot</h5>
 					<p>{{ serie.Plot }}</p>
+
+					<!-- Number of seasons -->
+					<h5>Number of seasons available today</h5>
+					<p>{{ serie.totalSeasons }}</p>
 
 					<!-- Director & Actors list -->
                     <h5>Director</h5>

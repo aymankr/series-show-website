@@ -23,6 +23,7 @@ use App\Entity\Genre;
 use App\Entity\Actor;
 use App\Entity\ExternalRating;
 use App\Entity\Country;
+use App\Entity\Season;
 
 /**
  * @Route("/admin")
@@ -98,7 +99,7 @@ class AdminController extends AbstractController
 
             // Present the serie if found
             if ($serieFound) {
-                return $this->render('admin/add_series/serie_presentation.html.twig', [
+                return $this->render('admin/add_series/new_serie_overview.html.twig', [
                     'serie' => $api_response->toArray()
                 ]);
             }
@@ -163,10 +164,13 @@ class AdminController extends AbstractController
         $serie->addCountry($serieCountry);
         $entityManager->persist($serieCountry);
 
-        // Add ratings
-        $newExternRating = $this->getNewExternalRating($propertyAccessor->getValue($serieInfos, '[Ratings]')[0]['Value'], 
-        $propertyAccessor->getValue($serieInfos, '[imdbVotes]'), 
-        $serie, $externRatingSrcRepo);
+        // Add ratings if it has
+        if (count($propertyAccessor->getValue($serieInfos, '[Ratings]')) > 0) {
+            $newExternRating = $this->getNewExternalRating($propertyAccessor->getValue($serieInfos, '[Ratings]')[0]['Value'], 
+                                                           $propertyAccessor->getValue($serieInfos, '[imdbVotes]'), 
+                                                           $serie, $externRatingSrcRepo);
+            $entityManager->persist($newExternRating);                                                           
+        }
 
         // Add genres
         $imdbGenres = explode(', ', $propertyAccessor->getValue($serieInfos, '[Genre]'));
@@ -184,8 +188,12 @@ class AdminController extends AbstractController
             $entityManager->persist($actor);
         }
 
+        // Add seasons
+        for ($i = 1; $i <= $propertyAccessor->getValue($serieInfos, '[totalSeasons]'); $i++) {
+            $entityManager->persist($this->addNewSeason($i, $serie));
+        }
+
         // Commit the changes to the database
-        $entityManager->persist($newExternRating);
         $entityManager->persist($serie);
         $entityManager->flush();
 
@@ -195,14 +203,14 @@ class AdminController extends AbstractController
     /**
      * Get the corresponding given imdb genre from the database, and create a new genre if necessary.
      */
-    private function getNewSerieGenre(string $imdbGenreName, Series $serie, GenreRepository $genreRepository)
+    private function getNewSerieGenre(string $omdbGenreName, Series $serie, GenreRepository $genreRepository)
     {
-        $newSerieGenre = $genreRepository->findOneBy(['name' => $imdbGenreName]);
+        $newSerieGenre = $genreRepository->findOneBy(['name' => $omdbGenreName]);
 
         // If not found, create a new genre
         if (!$newSerieGenre) {
             $newSerieGenre = new Genre();
-            $newSerieGenre->setName($imdbGenreName);
+            $newSerieGenre->setName($omdbGenreName);
         }
         
         $newSerieGenre->addSeries($serie);  // Add the serie to the genre anyway
@@ -212,37 +220,40 @@ class AdminController extends AbstractController
     /**
      * Get the corresponding given imdb actor from the database, and create a new actor if necessary.
      */
-    private function getNewSerieActor(string $imdbActorName, Series $serie, ActorRepository $actorRepository)
+    private function getNewSerieActor(string $omdbActorName, Series $serie, ActorRepository $actorRepository)
     {
-        $newSerieActor = $actorRepository->findOneBy(['name' => $imdbActorName]);
+        $newSerieActor = $actorRepository->findOneBy(['name' => $omdbActorName]);
 
-        // If not found, create a new genre
+        // If not found, create a new actor
         if (!$newSerieActor) {
             $newSerieActor = new Actor();
-            $newSerieActor->setName($imdbActorName);
+            $newSerieActor->setName($omdbActorName);
         }
         
-        $newSerieActor->addSeries($serie);  // Add the serie to the genre anyway
+        $newSerieActor->addSeries($serie);  // Add the serie to the actor
         return $newSerieActor;
     }
 
     /**
      * Get the corresponding given country from the database, and create a new country if necessary.
      */
-    private function getNewCountry(string $imdbCountryName, Series $serie, CountryRepository $countryRepository)
+    private function getNewCountry(string $omdbCountryName, Series $serie, CountryRepository $countryRepository)
     {
-        $newCountry = $countryRepository->findOneBy(['name' => $imdbCountryName]);
+        if ($omdbCountryName === 'United States') {
+            $omdbCountryName = 'USA';
+        }
 
-        // If not found, create a new genre
+        $newCountry = $countryRepository->findOneBy(['name' => $omdbCountryName]);
+
+        // If not found, create a new country
         if (!$newCountry) {
             $newCountry = new Country();
-            $newCountry->setName($imdbCountryName);
+            $newCountry->setName($omdbCountryName);
         }
         
-        $newCountry->addSeries($serie);  // Add the serie to the genre anyway
+        $newCountry->addSeries($serie);  // Add the serie to the country
         return $newCountry;
     }
-
 
     private function getNewExternalRating(string $imdbRatingValue, string $imdbVotes, 
                                           Series $serie, ExternalRatingSourceRepository $externRatingSrcRepo)
@@ -253,5 +264,17 @@ class AdminController extends AbstractController
         $externalRating->setVotes((int)str_replace( ',', '', $imdbVotes));
         $externalRating->setSeries($serie);
         return $externalRating;
+    }
+
+    /**
+     * Create a new season with the given number and serie and returns it.
+     */
+    private function addNewSeason(int $seasonNumber, Series $serie): Season
+    {
+        $newSeason = new Season();
+        $newSeason->setNumber($seasonNumber);
+        $newSeason->setSeries($serie);
+        $serie->addSeason($newSeason);
+        return $newSeason;
     }
 }

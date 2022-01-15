@@ -68,10 +68,13 @@
 				<div class="d-flex flex-column justify-content-center mb">
 
 					<h4>
-						<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ serie.getImdb() }}">IMDB
-						</a>
+						<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ serie.getImdb() }}">IMDB</a>
 						average ratings :
-						{{ serie.getExternalRatingValue() }}
+						{% if serie.externalRating %}
+							{{ serie.externalRating.value }}
+						{% else %}
+							Unavailable
+						{% endif %}
 					</h4>
 
 					<!-- Awards -->

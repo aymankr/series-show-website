@@ -470,12 +470,4 @@ class Series
     {
         return $this->externalRating;
     }
-
-    /**
-     * @return ExternalRating
-     */
-    public function getExternalRatingValue()
-    {
-        return $this->externalRating->getValue();
-    }
 }
