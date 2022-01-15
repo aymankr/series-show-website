@@ -140,10 +140,16 @@ class AdminController extends AbstractController
         $serie->setImdb($serieImdb);
         $serie->setTitle($propertyAccessor->getValue($serieInfos, '[Title]'));
         $serie->setPlot($propertyAccessor->getValue($serieInfos, '[Plot]'));
-        $serie->setDirector($propertyAccessor->getValue($serieInfos, '[Director]'));
         $serie->setAwards($propertyAccessor->getValue($serieInfos, '[Awards]'));
         $serie->setYoutubeTrailer(NULL);
         
+        // Add director
+        if ($propertyAccessor->getValue($serieInfos, '[Director]') != 'N/A') {
+            $serie->setDirector($propertyAccessor->getValue($serieInfos, '[Director]'));
+        } else {
+            $serie->setDirector(NULL);
+        }
+
         // Add poster
         $posterFile = file_get_contents($propertyAccessor->getValue($serieInfos, '[Poster]'));
         $serie->setPoster($posterFile);
