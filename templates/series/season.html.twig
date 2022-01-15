@@ -28,11 +28,11 @@
 
 					<!-- Mark as seen or not seen button -->
 					{% if app.user and episode in app.user.episode %}
-						<a class="btn btn-primary" href="{{ path('mark_as_not_seen', {'id': episode.id}) }}">
+						<a class="btn btn-primary" href="{{ path('markAsNotSeen', {'id': episode.id}) }}">
 							Mark as not seen
 						</a>
 					{% else %}
-						<a class="btn btn-primary" href="{{ path('mark_as_seen', {'id': episode.id}) }}">
+						<a class="btn btn-primary" href="{{ path('markAsSeen', {'id': episode.id}) }}">
 							Mark as seen
 						</a>
 					{% endif %}

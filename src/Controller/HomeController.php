@@ -2,15 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Genre;
-use App\Repository\SeriesRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Genre;
+use App\Repository\SeriesRepository;
 
 class HomeController extends AbstractController
 {
+     // The paths of the pages to render
+     private static $indexPage = 'home/index.html.twig';
+     private static $aboutPage = 'home/about.html.twig';
+
     /**
      * @Route("/", name="home")
      */
@@ -22,7 +26,7 @@ class HomeController extends AbstractController
 
         $trendingSeries = $seriesRepository->getTrendingSeries();
 
-        return $this->render('home/index.html.twig', [
+        return $this->render(HomeController::$indexPage, [
             'categories' => $categories,
             'trendingSeries' => $trendingSeries
         ]);
@@ -33,6 +37,6 @@ class HomeController extends AbstractController
      */
     public function about(): Response
     {
-        return $this->render('home/about.html.twig');
+        return $this->render(HomeController::$aboutPage);
     }
 }
