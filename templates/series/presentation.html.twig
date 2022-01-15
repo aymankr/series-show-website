@@ -7,14 +7,84 @@
 			class="d-flex justify-content-around">
 
 			<!-- Left column -->
+			<div class="d-flex flex-column">
+
+				<style>
+					/* Container needed to position the button. Adjust the width as needed */
+					.serie_poster {
+						position: relative;
+						width: 50%;
+					}
+
+					/* Style the button and place it in the middle of the container/image */
+					.serie_poster .btn {
+						position: absolute;
+						top: 50%;
+						left: 100%;
+						transform: translate(-50%, -50%);
+						-ms-transform: translate(-50%, -50%);
+						background-color: #555;
+						color: white;
+						padding: 12px 24px;
+						border: none;
+						cursor: pointer;
+					}
+
+					.serie_poster:hover {
+						opacity: 0.6;
+						transition: 0.5s;
+					}
+				</style>
+				<!-- Poster -->
+
+				{% if serie.youtubeTrailer %}
+					<div class="serie_poster">
+						<a href="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" target="_blank">
+							<img src="{{ path('series_poster', {'id': serie.id})}}" class="show-img-left" alt="poster">
+							<button class="btn">Watch the trailer</button>
+						</a>
+					</div>
+				{% else %}
+					<img src="{{ path('series_poster', {'id': serie.id})}}" class="show-img-left" alt="poster">
+				{% endif %}
+
+				<!-- Genres -->
+				<section class="mt-3 mb-3">
+					Genres:</br>
+				{% for category in serie.genre %}
+					<a class="btn btn-success mt-1" href="{{path('explore_series', {'category':category.name})}}">
+						<span>{{ category.name }}</span>
+					</a>
+				{% endfor %}
+			</section>
+
+			<!-- Follow or unfollow button -->
+			{% if app.user and not app.user.admin and serie in app.user.series %}
+				<a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
+			{% elseif not app.user or (app.user and not app.user.admin) %}
+				<a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
+			{% endif %}
+
+			<!-- Rate button -->
+			{% if app.user and not app.user.admin and serie.hasBeenRatedByUser(app.user) %}
+				<a class="btn btn-warning w-100 mt-2" href="{{ path('see_rate', {'id': serie.id}) }}">See my rating</a>
+			{% elseif not app.user or (app.user and not app.user.admin) %}
+				<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
+			{% endif %}
+
+			<!-- Comments moderation button -->
+			{% if app.user and app.user.admin %}
+				<a class="btn btn-success w-100 mt-2" href="{{ path('comments_moderation', {'id': serie.id}) }}">See all comments</a>
+			{% endif %}
+		</div>
+
+		<!-- Right column -->
+		<div
+			class="ml-5 mt-2">
+
+			<!-- First section: Series informations -->
 			<div
-				class="d-flex flex-column">
-
-				<!-- Title and poster -->
-				<h2>{{ serie.title }}</h2>
-				<a class="w-0" href="{{ path('series_poster', {'id': serie.id}) }}"><img
-				src="{{ path('series_poster', {'id': serie.id})}}" class="show-img-left" alt="poster"></a>
-
+				class="d-flex flex-column justify-content-center mb">
 				<!-- Year start and end -->
 				<em>
 					{% if serie.yearStart == NULL %}
@@ -30,100 +100,75 @@
 					{% endif %}
 				</em>
 
-				<!-- Genres -->
-				<section class="m-3">
-					Genres:
-					{% for category in serie.getGenre() %}
-						<a class="btn btn-success" href="{{path('explore_series', {'category':category.name})}}">
-							<span>{{ category.name }}</span>
-						</a>
-					{% endfor %}
+				<h2>{{ serie.title }}</h2>
+				<h6>
+					<a class="text-warning" target="_blank" href="https://www.imdb.com/title/{{ serie.getImdb() }}">IMDB
+					</a>
+					average ratings :
+					{{ serie.getExternalRating().value }}<span class="small">,
+						{{serie.getExternalRating().votes }}
+						votes.</span>
+				</h6>
+
+				<!-- Awards -->
+				{% if "N/A" not in serie.awards %}
+					<h5 class="text-warning">
+						{{ serie.awards }}
+					</h5>
+				{% endif %}
+
+				<!-- Number of followers -->
+				<h6>
+					Followed by
+					{{ serie.user|length }}
+					people, average ratings :
+					{{ serie.getAverageRating() }}/10
+				</h6>
+
+				<!-- Trailer & Plot -->
+				<!--
+				{% if serie.youtubeTrailer %}
+					<h6>
+						Trailer
+					</h6>
+					<figure class="w-100 h-300">
+						<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" title="trailer"></iframe>
+					</figure>
+				{% else %}
+					<h6 class="text-danger">Trailer unavailable.</h6>
+				{% endif %}
+				-->
+				<section class="mt-4">
+				<h6>Description</h6>
+				<p>{{ serie.plot }}</p>
 				</section>
 
-				<!-- Follow or unfollow button -->
-				{% if app.user and not app.user.admin and serie in app.user.series %}
-					<a class="btn btn-primary" href="{{ path('unfollow', {'id': serie.id}) }}">Unfollow</a>
-				{% elseif not app.user or (app.user and not app.user.admin) %}
-					<a class="btn btn-primary" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
-				{% endif %}
-
-				<!-- Rate button -->
-				{% if app.user and not app.user.admin and serie.hasBeenRatedByUser(app.user) %}
-					<a class="btn btn-warning w-100 mt-2" href="{{ path('see_rate', {'id': serie.id}) }}">See my rating</a>
-				{% elseif not app.user or (app.user and not app.user.admin) %}
-					<a class="btn btn-warning w-100 mt-2" href="{{ path('add_series_rate', {'id': serie.id}) }}">Rate</a>
-				{% endif %}
-
-				<!-- Comments moderation button -->
-				{% if app.user and app.user.admin %}
-					<a class="btn btn-success w-100 mt-2" href="{{ path('comments_moderation', {'id': serie.id}) }}">See all comments</a>
-				{% endif %}
-			</div>
-
-			<!-- Right column -->
-			<div class="ml-5 mt-5">
-
-				<!-- First section: Series informations -->
-				<div class="d-flex flex-column justify-content-center mb">
-
-					<h4>
-						<a class="text-success" target="_blank" href="https://www.imdb.com/title/{{ serie.getImdb() }}">IMDB
-						</a>
-						average ratings :
-						{{ serie.getExternalRatingValue() }}
-					</h4>
-
-					<!-- Awards -->
-					{% if "N/A" not in serie.awards %}
-						<h5 class="text-warning">
-							{{ serie.awards }}
-						</h5>
-					{% endif %}
-
-					<!-- Number of followers -->
-					<h5>
-						Followed by
-						{{ serie.user|length }}
-						user(s).
-					</h5>
-
-					<!-- Trailer & Plot -->
-					{% if serie.youtubeTrailer %}
-						<figure class="w-100 h-300">
-							<iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ serie.youtubeTrailer }}" 
-									title="trailer"></iframe>
-						</figure>
-					{% else %}
-						<h6 class="text-danger">Trailer unavailable.</h6>
-					{% endif %}
-
-					<p>{{ serie.plot }}</p>
-
-					<!-- Actors list -->
-					<h5>Actors</h5>
-					<ul class="list-group list-group-horizontal-sm">
-						{% for actor in serie.actor %}
-							<li class="list-group-item list-group-item-danger">{{ actor.getName() }}</li>
-						{% endfor %}
-					</ul>
-
-				</div>
+				<!-- Actors list -->
+				<h6>Actors</h6>
+				<ul class="list-group list-group-horizontal-sm">
+					{% for actor in serie.actor %}
+						<li class="list-group-item list-group-item-danger">{{ actor.getName() }}</li>
+					{% endfor %}
+				</ul>
+				
 			</div>
 		</div>
+	</div>
 
-		<!-- Second section: Series seasons & episodes -->
-		<div class="container m-3">
-			<h3>Seasons and episodes</h3>
-			{{ knp_pagination_render(seasons) }}
-			<ul class="list-group">
-				{% for season in seasons %}
-					<li class="list-group-item list-group-item-success">
-						<a class="link-warning text-danger" href="{{ path('series_season_presentation', {'number': season.number, 'id': serie.id }) }}">
-							<strong>Season
-							{{ season.number }} <strong>
-						</a>
-					</li>
-				{% endfor %}
+	<!-- Second section: Series seasons & episodes -->
+	<div class="container m-3">
+		<h3>Seasons and episodes</h3>
+		{{ knp_pagination_render(seasons) }}
+		<ul class="list-group">
+			{% for season in seasons %}
+				<li class="list-group-item list-group-item-success">
+					<a class="link-warning text-danger" href="{{ path('series_season_presentation', {'number': season.number, 'id': serie.id }) }}">
+						<strong>Season
+							{{ season.number }}
+							<strong></a>
+						</li>
+					{% endfor %}
+				</li>
 			</ul>
 		</div>
 

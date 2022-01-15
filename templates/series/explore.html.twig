@@ -8,31 +8,27 @@
 
 		<h1>Explore series</h1>
 
-		<div
-			class="row">
-			<!-- Search filtrers -->
-			<div class="col-md-3">
-				{% include 'series/_filter.html.twig' with {form : form} only %}
-			</div>
+		<!-- Search filtrers -->
+		{% include 'series/_filter.html.twig' with {form : form} only %}
 
-			<div
-				class="col-md-9">
-				<!-- sort by alphabet, date or rating -->
-				<div class="d-flex justify-content-start mb">
-					{{ knp_pagination_sortable(serie, 'By alphabet', 's.title' )}}
-					{{ knp_pagination_sortable(serie, 'By date', 's.yearStart' )}}
-					{% if app.user %}
-						{{ knp_pagination_sortable(serie, 'By rating', 'r.value' )}}
-					{% endif %}
-				</div>
-				<div class="grid">
-					{% for serie in serie %}
-						{% include 'series/_preview.html.twig' with {serie: serie} only %}
-					{% endfor %}
-				</div>
-				<div style="margin-top:5em;">
-					{{ knp_pagination_render(serie) }}
-				</div>
+		<!-- sort by alphabet, date or rating -->
+		<div class="d-flex justify-content-start mb">
+			{{ knp_pagination_sortable(serie, 'By alphabet', 's.title' )}}
+			{{ knp_pagination_sortable(serie, 'By date', 's.yearStart' )}}
+			{% if app.user %}
+				{{ knp_pagination_sortable(serie, 'By rating', 'r.value' )}}
+			{% endif %}
+		</div>
+
+		<div class="row">
+
+			<div class="grid">
+				{% for serie in serie %}
+					{% include 'series/_preview.html.twig' with {serie: serie} only %}
+				{% endfor %}
+			</div>
+			<div class="mt-2">
+				{{ knp_pagination_render(serie) }}
 			</div>
 		</div>
 	</div>

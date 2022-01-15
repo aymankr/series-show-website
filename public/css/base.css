@@ -1,0 +1,33 @@
+body {
+    background-color: #363636;
+    color: white;
+}
+ul {
+    list-style: none;
+}
+a {
+    color: white;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+}
+
+.grid > .row {
+    background-color: #282424;
+    border: 0.1px solid white;
+}
+
+.page-item a {
+    color: red;
+}
+.page-item.active .page-link {
+    background-color: #F32013;
+    border-color: #F32013;
+}
+.dropdown-menu a:hover {
+    color: white;
+    background-color: #CA0B00 !important;
+}

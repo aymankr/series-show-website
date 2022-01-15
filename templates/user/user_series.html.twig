@@ -1,34 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My series{% endblock %}
+{% block title %}Explore
+{% endblock %}
 
 {% block body %}
+	<div class="container">
 
-    <div class="container">
-    
-        <h1>My series</h1>
-    
-            <div class="row">
-                <div class="col-md-3">
-                        {% include 'user/_filter_user_series.html.twig' with {form : form} only %}
-                </div>
-    
-                <div class="col-md-9">
-                    <div class="d-flex justify-content-start mb">
-                        {{ knp_pagination_sortable(serie, 'By alphabet', 's.title' )}}
-                        {{ knp_pagination_sortable(serie, 'By date', 's.yearStart' )}}
-                        {{ knp_pagination_sortable(serie, 'By rating', 'r.value' )}}
-                    </div>
-                    <div class="grid">
-                        {% for serie_n in serie %}
-                            {% include 'series/_preview.html.twig' with {serie: serie_n} %}
-                        {% endfor %}
-                    </div>
-                    <div style="margin-top:5em;">
-                        {{ knp_pagination_render(serie) }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    
+		<h1>Explore series</h1>
+
+		<!-- Search filtrers -->
+		{% include 'user/_filter_user_series.html.twig' with {form : form} only %}
+
+		<!-- sort by alphabet, date or rating -->
+		<div class="d-flex justify-content-start mb">
+			{{ knp_pagination_sortable(serie, 'By alphabet', 's.title' )}}
+			{{ knp_pagination_sortable(serie, 'By date', 's.yearStart' )}}
+			{% if app.user %}
+				{{ knp_pagination_sortable(serie, 'By rating', 'r.value' )}}
+			{% endif %}
+		</div>
+
+		<div class="row">
+
+			<div class="grid">
+				{% for serie in serie %}
+					{% include 'series/_preview.html.twig' with {serie: serie} only %}
+				{% endfor %}
+			</div>
+			<div class="mt-2">
+				{{ knp_pagination_render(serie) }}
+			</div>
+		</div>
+	</div>
+
 {% endblock %}
