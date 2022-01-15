@@ -4,7 +4,6 @@
 	<link type="text/css" href="{{ asset('css/presentation.css') }}" rel="stylesheet"/>
 {% endblock %}
 
-
 {% block body %}
 	<div class="container">
 
@@ -12,9 +11,8 @@
 			class="d-flex justify-content-around">
 
 			<!-- Left column -->
-			<div class="d-flex flex-column">
-				<!-- Poster -->
-
+			<div
+				class="d-flex flex-column">
 				<!-- Poster -->
 				{% if serie.youtubeTrailer %}
 					<div class="serie_poster">
@@ -85,7 +83,9 @@
 					</a>
 					average ratings :
 					{% if serie.externalRating and serie.externalRating|length > 0 %}
-						{{ serie.externalRating[0].value }}<span class="small">, {{serie.externalRating[0].votes }}votes.</span>
+						{{ serie.externalRating[0].value }}<span class="small">,
+							{{serie.externalRating[0].votes }}
+							votes.</span>
 					{% else %}
 						Unknown.
 					{% endif %}
@@ -112,8 +112,8 @@
 
 				<!-- Plot -->
 				<section class="mt-4">
-				<h6>Description</h6>
-				<p>{{ serie.plot }}</p>
+					<h6>Description</h6>
+					<p>{{ serie.plot }}</p>
 				</section>
 
 				<!-- Actors list -->
@@ -123,7 +123,7 @@
 						<li class="list-group-item list-group-item-danger">{{ actor.name }}</li>
 					{% endfor %}
 				</ul>
-				
+
 			</div>
 		</div>
 	</div>

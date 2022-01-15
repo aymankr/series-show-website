@@ -1,10 +1,10 @@
 <div class="row m-1">
-	<div class="col-md-3">
+	<article class="col-md-3">
 		<a href="{{path('series_presentation', {'id': serie.id})}}">
 			<img src="{{ path('series_poster', {'id': serie.id})}}" class="preview-img-top" style="max-width: 100px; height: auto; " alt="poster"/>
 		</a>
 
- 		<div class="float-left mt-3">
+ 		<section class="float-left mt-3">
 			{% if app.user and app.user.admin %}
 				<a class="btn btn-success mt-2" href="{{ path('comments_moderation', {'id': serie.id}) }}">See all comments</a>
 			{% elseif app.user and serie in app.user.series %}
@@ -12,19 +12,19 @@
 			{% elseif not app.user or (app.user and serie not in app.user.series) %}
 				<a class="btn btn-warning" href="{{ path('follow', {'id': serie.id}) }}">Follow</a>
 			{% endif %}
-		</div>       
-	</div>
+		</section>       
+	</article>
 
-	<div class="col-md-9 p-2">
+	<article class="col-md-9 p-2">
 		<a href="{{path('series_presentation', {'id': serie.id})}}" class="h5">
 			{{ serie.title }}
 		</a> <em class="small float-right">{{ serie.yearStart }} {% if serie.yearEnd %}- {{ serie.yearEnd }}{% endif %}</em>
-		<div>
+		<section>
 			{% for genre in serie.genre %}
 				<em class="text-muted text-italic">#{{ genre.name }}</em>
 			{% endfor %}
-		</div>
-		<div>
+		</section>
+		<section>
 			{% if app.user != NULL %}
 				<p class="small">
 					{% if serie.getAverageRating() != -1 %}
@@ -37,6 +37,6 @@
 			{% endif %}
 			<!-- imdb, youtube trailer, awards, year strart, end, action show-->
 			<p class"small">{{ serie.getPlotLimitedCharacters }}</p>
-		</div>
-	</div>
+		</section>
+	</article>
 </div>
