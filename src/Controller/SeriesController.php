@@ -6,6 +6,8 @@ use App\Entity\Series;
 use App\Entity\Genre;
 use App\Form\SearchSerieFormType;
 use App\Form\SeasonsPresentationFormType;
+use App\Repository\CountryRepository;
+use App\Repository\GenreRepository;
 use App\Repository\SeriesRepository;
 use App\Repository\SeasonRepository;
 use App\Search\Search;
@@ -24,13 +26,12 @@ class SeriesController extends AbstractController
     /**
      * @Route("/explore", name="explore_series", methods={"GET"})
      */
-    public function explore(SeriesRepository $repository, Request $request, EntityManagerInterface $entityManager): Response
+    public function explore(CountryRepository $countryRepository, GenreRepository $genreRepository, SeriesRepository $repository, Request $request): Response
     {
         $search = new Search();
         $search->page = $request->get('page', 1);
         if (isset($_GET['category'])) {
-            $repo = $entityManager->getRepository(Genre::class);
-            $c = $repo->createQueryBuilder('g')
+            $c = $genreRepository->createQueryBuilder('g')
                 ->where('g.name = :name')
                 ->setParameter('name', $_GET['category'])->getQuery()->getResult();
 
