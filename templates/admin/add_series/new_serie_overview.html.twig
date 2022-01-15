@@ -21,7 +21,7 @@
 				<section class="mt-2">
 					Genres: 
 					{% for genre in serie.Genre|split(',') %}
-						<a href="{{path('explore_series', {'category': genre})}}">
+						<a href="{{path('exploreSeries', {'category': genre})}}">
 							<span>{{ genre }}</span>
 						</a>
 					{% endfor %}
@@ -82,8 +82,8 @@
 			</div>
 		</div>
 
-        <a href="{{ path('add_serie', {'serieImdb': serie.imdbID }) }}" class="btn btn-primary">Add this serie</a>
-        <a href="{{ path('search_imdb_serie') }}" class="btn btn-danger">Cancel</a>
+        <a href="{{ path('addSerie', {'serieImdb': serie.imdbID }) }}" class="btn btn-primary">Add this serie</a>
+        <a href="{{ path('searchImdbSerie') }}" class="btn btn-danger">Cancel</a>
 
 	</div>
 {% endblock %}

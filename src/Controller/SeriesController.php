@@ -2,31 +2,31 @@
 
 namespace App\Controller;
 
-use App\Entity\Series;
-use App\Entity\Genre;
-use App\Form\SearchSerieFormType;
-use App\Form\SeasonsPresentationFormType;
-use App\Repository\CountryRepository;
-use App\Repository\GenreRepository;
-use App\Repository\SeriesRepository;
-use App\Repository\SeasonRepository;
-use App\Search\Search;
-use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use App\Form\SearchSerieFormType;
+use App\Search\Search;
+use App\Entity\Series;
+use App\Repository\GenreRepository;
+use App\Repository\SeriesRepository;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/series")
  */
 class SeriesController extends AbstractController
 {
+    // The paths of the pages to render
+    private static $explorePage = 'series/explore.html.twig';
+    private static $seriePresentationPage = 'series/presentation.html.twig';
+    private static $seasonPage = 'series/season.html.twig';
+
     /**
-     * @Route("/explore", name="explore_series", methods={"GET"})
+     * @Route("/explore", name="exploreSeries", methods={"GET"})
      */
-    public function explore(CountryRepository $countryRepository, GenreRepository $genreRepository, SeriesRepository $repository, Request $request): Response
+    public function explore(GenreRepository $genreRepository, SeriesRepository $repository, Request $request): Response
     {
         $search = new Search();
         $search->page = $request->get('page', 1);
@@ -44,32 +44,31 @@ class SeriesController extends AbstractController
         // Get the series to display
         if (!$this->getUser()) {
             $serie = $repository->getSeriesUserNotConnected($search);
-        } 
-        else {
+        } else {
             $serie = $repository->getSeriesUserConnected($search, $this->getUser());
         }
 
-        return $this->render('series/explore.html.twig', [
+        return $this->render(SeriesController::$explorePage, [
             'serie' => $serie,
             'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/presentation/{id}", name="series_presentation", methods={"GET"})
+     * @Route("/presentation/{id}", name="seriesPresentation")
      */
     public function presentation(Series $serie, Request $request, PaginatorInterface $paginator): Response
     {
         $seasons = $paginator->paginate($serie->getSeasonsOrdered(), $request->query->getInt('page', 1), 5);
 
-        return $this->render('series/presentation.html.twig', [
+        return $this->render(SeriesController::$seriePresentationPage, [
             'serie' => $serie,
             'seasons'=> $seasons,
         ]);
     }
 
      /**
-     * @Route("/presentation/{id}/season/{number}", name="series_season_presentation", methods={"GET"})
+     * @Route("/presentation/{id}/season/{number}", name="seriesSeasonSresentation")
      */
     public function seasonsPresentation(int $id, int $number, SeriesRepository $seriesRepository, PaginatorInterface $paginator, Request $request): Response
     {
@@ -77,7 +76,7 @@ class SeriesController extends AbstractController
         $season = $serie->getSeasonsOrdered()[$number-1];
         $episodes = $paginator->paginate($season->getEpisodesOrdered(), $request->query->getInt('page', 1), 8);
 
-        return $this->render('series/season.html.twig', [
+        return $this->render(SeriesController::$seasonPage, [
             'serie' => $serie,
             'seasonNumber' => $number,
             'season' => $season,
@@ -86,7 +85,7 @@ class SeriesController extends AbstractController
     }   
 
     /**
-     * @Route("/poster/{id}", name="series_poster", methods={"GET"})
+     * @Route("/poster/{id}", name="seriesPoster")
      */
     public function poster(Series $serie): Response
     {

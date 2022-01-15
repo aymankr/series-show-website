@@ -2,9 +2,9 @@
 
 namespace App\Repository;
 
-use App\Entity\ExternalRatingSource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\ExternalRatingSource;
 
 /**
  * @method ExternalRatingSource|null find($id, $lockMode = null, $lockVersion = null)
