@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\SearchSerieFormType;
 use App\Search\Search;
 use App\Entity\Series;
+use App\Repository\EpisodeRepository;
 use App\Repository\GenreRepository;
 use App\Repository\SeriesRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -70,17 +71,19 @@ class SeriesController extends AbstractController
      /**
      * @Route("/presentation/{id}/season/{number}", name="seriesSeasonSresentation")
      */
-    public function seasonsPresentation(int $id, int $number, SeriesRepository $seriesRepository, PaginatorInterface $paginator, Request $request): Response
+    public function seasonsPresentation(int $id, int $number, SeriesRepository $seriesRepository, EpisodeRepository $episodeRepository, PaginatorInterface $paginator, Request $request): Response
     {
         $serie = $seriesRepository->find($id);
         $season = $serie->getSeasonsOrdered()[$number-1];
         $episodes = $paginator->paginate($season->getEpisodesOrdered(), $request->query->getInt('page', 1), 8);
+        $count = $episodeRepository->getNumberOfSeenEpisodes($this->getUser(), $season);
 
         return $this->render(SeriesController::$seasonPage, [
             'serie' => $serie,
             'seasonNumber' => $number,
             'season' => $season,
-            'episodes' => $episodes
+            'episodes' => $episodes,
+            'numberSeen' => $count
         ]);
     }   
 
