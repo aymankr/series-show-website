@@ -12,25 +12,25 @@
 		{% include 'series/_filter.html.twig' with {form : form} only %}
 
 		<!-- sort by alphabet, date or rating -->
-		<div class="d-flex justify-content-start mb">
+		<article class="d-flex justify-content-start mb">
 			{{ knp_pagination_sortable(serie, 'By alphabet', 's.title' )}}
 			{{ knp_pagination_sortable(serie, 'By date', 's.yearStart' )}}
 			{% if app.user %}
 				{{ knp_pagination_sortable(serie, 'By rating', 'r.value' )}}
 			{% endif %}
-		</div>
+		</article>
 
-		<div class="row">
+		<article class="row">
 
 			<div class="grid">
 				{% for serie in serie %}
 					{% include 'series/_preview.html.twig' with {serie: serie} only %}
 				{% endfor %}
 			</div>
-			<div class="mt-2">
+			<section class="mt-2">
 				{{ knp_pagination_render(serie) }}
-			</div>
-		</div>
+			</section>
+		</article>
 	</div>
 
 {% endblock %}

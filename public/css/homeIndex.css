@@ -1,0 +1,32 @@
+.container {
+    text-align: center;
+}
+
+.container a {
+    margin: 0.5em;
+    background-color: #AF1F00;
+    box-shadow: 0 14px 28px rgba(255, 255, 255, 0.25), 0 10px 10px rgba(255, 255, 255, 0.22);
+    border-radius: 6%;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
+}
+
+.grid a {
+    width: 13em;
+    margin: 0.5em;
+    background-color: #AF1F00;
+    box-shadow: 0 14px 28px rgba(255, 255, 255, 0.25), 0 10px 10px rgba(255, 255, 255, 0.22);
+    border-radius: 6%;
+}
+
+.container a:hover {
+    letter-spacing: 2.7px;
+    transform: translate(0, -3%);
+    transition: 0.3s;
+    color: white;
+    text-decoration: none;
+}
