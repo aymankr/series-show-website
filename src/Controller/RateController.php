@@ -79,18 +79,18 @@ class RateController extends AbstractController
     /**
      * @Route("/delete/{id}", name="deleteSeriesRate")
      */
-    public function deleteSeriesRate(RatingRepository $ratingRepository, int $id, Request $request, EntityManagerInterface $entityManager): Response
+    public function deleteSeriesRate(SeriesRepository $seriesRepository, int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
         // Verify that the user is connected and is a normal user
         if ($isNotNormalUser = $this->verifyNormalUser()) {
             return $isNotNormalUser;
         }
 
-        $rate = $ratingRepository->find($id);
-        $entityManager->remove($rate); 
-        $entityManager->flush();       
+        $ratedSerie = $seriesRepository->find($id);
+        $entityManager->remove($ratedSerie->getRatingByUser($this->getUser()));
+        $entityManager->flush();
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->redirectToRoute('seriesPresentation', ['id' => $id]);
     }
 
 

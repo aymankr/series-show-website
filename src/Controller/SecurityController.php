@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\FormInterface;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
@@ -30,7 +31,7 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             // Register the user and update the changes made in the database
-            $entityManager->persist($this->setupUserRegistration($user, $userPasswordHasher));
+            $entityManager->persist($this->setupUserRegistration($form, $user, $userPasswordHasher));
             $entityManager->flush();
 
             return $this->redirectToRoute('userLogin');
@@ -66,13 +67,13 @@ class SecurityController extends AbstractController
     /**
      * Encore the password of the user and other informations needed to the registration.
      */
-    private function setupUserRegistration(User $userToRegister, UserPasswordHasherInterface $userPasswordHasher): User
+    private function setupUserRegistration(FormInterface $form, User $userToRegister, UserPasswordHasherInterface $userPasswordHasher): User
     {
         // encode the plain password
         $userToRegister->setPassword(
             $userPasswordHasher->hashPassword(
                 $userToRegister,
-                $userToRegister->get('plainPassword')->getData()
+                $form->get('plainPassword')->getData()
             )
         );
 
